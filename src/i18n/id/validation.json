@@ -4,5 +4,7 @@
   "IS_STRING": "$t(label.{property}) harus berupa string",
   "IS_STRONG_PASSWORD": "$t(label.{property}) harus kuat",
   "IS_EMAIL": "$t(label.{property}) harus sesuai format",
-  "MATCH_PASSWORD": "$t(label.{property}) tidak sama dengan $t(label.password)"
+  "MATCH_PASSWORD": "$t(label.{property}) tidak sama dengan $t(label.password)",
+  "IS_NOT_EXISTS": "$t(label.{property}) sudah ada",
+  "IS_EXISTS": "$t(label.{property}) tidak ditemukan"
 }

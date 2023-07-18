@@ -1,5 +1,8 @@
 {
+  "id": "id",
   "user": "user",
+  "username": "username",
+  "email": "email",
   "password": "password",
   "confirmPassword": "confirm password"
 }

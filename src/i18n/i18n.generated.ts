@@ -6,7 +6,10 @@ export type I18nTranslations = {
         "HELLO_WORLD": string;
     };
     "label": {
+        "id": string;
         "user": string;
+        "username": string;
+        "email": string;
         "password": string;
         "confirmPassword": string;
     };
@@ -17,6 +20,8 @@ export type I18nTranslations = {
         "IS_STRONG_PASSWORD": string;
         "IS_EMAIL": string;
         "MATCH_PASSWORD": string;
+        "IS_NOT_EXISTS": string;
+        "IS_EXISTS": string;
     };
 };
 export type I18nPath = Path<I18nTranslations>;

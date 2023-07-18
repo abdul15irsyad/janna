@@ -1,5 +1,8 @@
 {
+  "id": "id",
   "user": "user",
+  "username": "username",
+  "email": "email",
   "password": "kata sandi",
   "confirmPassword": "konfirmasi kata sandi"
 }

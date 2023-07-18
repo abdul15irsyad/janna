@@ -6,16 +6,26 @@ import {
   ValidateBy,
 } from 'class-validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
+import { User } from '../entities/user.entity';
+import { IsNotExists } from '../../shared/validators/is-not-exists.validator';
 
 export class CreateUserDto {
   @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
   @IsNotEmpty({ message: i18nValidationMessage('validation.IS_NOT_EMPTY') })
   name: string;
 
+  @IsNotExists(
+    { entity: User, field: 'username' },
+    { message: i18nValidationMessage('validation.IS_NOT_EXISTS') },
+  )
   @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
   @IsNotEmpty({ message: i18nValidationMessage('validation.IS_NOT_EMPTY') })
   username: string;
 
+  @IsNotExists(
+    { entity: User, field: 'email' },
+    { message: i18nValidationMessage('validation.IS_NOT_EXISTS') },
+  )
   @IsEmail({}, { message: i18nValidationMessage('validation.IS_EMAIL') })
   @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
   @IsNotEmpty({ message: i18nValidationMessage('validation.IS_NOT_EMPTY') })
