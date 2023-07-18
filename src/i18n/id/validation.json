@@ -1,0 +1,8 @@
+{
+  "IS_NOT_EMPTY": "$t(label.{property}) tidak boleh kosong",
+  "NOT_FOUND": "$t(label.{property}) tidak ditemukan",
+  "IS_STRING": "$t(label.{property}) harus berupa string",
+  "IS_STRONG_PASSWORD": "$t(label.{property}) harus kuat",
+  "IS_EMAIL": "$t(label.{property}) harus sesuai format",
+  "MATCH_PASSWORD": "$t(label.{property}) tidak sama dengan $t(label.password)"
+}

@@ -1,0 +1,8 @@
+{
+  "IS_NOT_EMPTY": "$t(label.{property}) cannot be empty",
+  "NOT_FOUND": "$t(label.{property}) not found",
+  "IS_STRING": "$t(label.{property}) should be string",
+  "IS_STRONG_PASSWORD": "$t(label.{property}) should be strong",
+  "IS_EMAIL": "$t(label.{property}) should be email format",
+  "MATCH_PASSWORD": "$t(label.{property}) not match to $t(label.password)"
+}
