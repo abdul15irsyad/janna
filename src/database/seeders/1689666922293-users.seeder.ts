@@ -8,6 +8,7 @@ import { User } from '../../user/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { random } from '../../shared/utils/array.util';
 import { hashPassword } from '../../shared/utils/password.util';
+import { Role } from '../../role/entities/role.entity';
 
 export default class UsersSeeder extends Seeder {
   public async run(datasource: DataSource): Promise<void> {
@@ -19,16 +20,19 @@ export default class UsersSeeder extends Seeder {
     )
       return;
 
+    const roles = await datasource.getRepository(Role).find();
+
     const users: DeepPartial<User>[] = [];
+    users.push({
+      id: '02eee6ce-a2a2-4b5e-bb55-cfc51dfd9516',
+      name: 'Super Administrator',
+      username: 'superadministrator',
+      email: 'info@bukapeta.com',
+      emailVerifiedAt: dayjs().toDate(),
+      password: 'x0TcLtjV22xXtDI',
+      role: roles.find((role) => role.slug === 'super-administrator'),
+    });
     if (NODE_ENV !== 'production') {
-      users.push({
-        id: '02eee6ce-a2a2-4b5e-bb55-cfc51dfd9516',
-        name: 'Super Administrator',
-        username: 'superadministrator',
-        email: 'info@bukapeta.com',
-        emailVerifiedAt: dayjs().toDate(),
-        password: 'x0TcLtjV22xXtDI',
-      });
       for (let i = users.length; i < 20; i++) {
         const fullName = faker.name.fullName();
         users.push({
@@ -38,6 +42,7 @@ export default class UsersSeeder extends Seeder {
             .email(fullName.split(' ')[0], fullName.split(' ')[1])
             .toLowerCase(),
           emailVerifiedAt: random([null, dayjs().toDate()]),
+          role: roles.find((role) => role.slug === 'user'),
         });
       }
     }

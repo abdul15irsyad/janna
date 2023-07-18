@@ -1,11 +1,11 @@
 {
   "IS_NOT_EMPTY": "$t(label.{property}) cannot be empty",
-  "NOT_FOUND": "$t(label.{property}) not found",
   "IS_STRING": "$t(label.{property}) should be string",
   "IS_STRONG_PASSWORD": "$t(label.{property}) should be strong",
   "IS_EMAIL": "$t(label.{property}) should be email format",
   "MATCH_PASSWORD": "$t(label.{property}) not match to $t(label.password)",
   "IS_NOT_EXISTS": "$t(label.{property}) is already exists",
   "IS_EXISTS": "$t(label.{property}) not found",
-  "IS_IN": "$t(label.{property}) must be one of the following values: {constraints.0}"
+  "IS_IN": "$t(label.{property}) must be one of the following values: {constraints.0}",
+  "IS_UUID": "t(label.{property}) should be an uuid"
 }

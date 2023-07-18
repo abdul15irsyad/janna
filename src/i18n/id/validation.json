@@ -1,11 +1,11 @@
 {
   "IS_NOT_EMPTY": "$t(label.{property}) tidak boleh kosong",
-  "NOT_FOUND": "$t(label.{property}) tidak ditemukan",
   "IS_STRING": "$t(label.{property}) harus berupa string",
   "IS_STRONG_PASSWORD": "$t(label.{property}) harus kuat",
   "IS_EMAIL": "$t(label.{property}) harus sesuai format",
   "MATCH_PASSWORD": "$t(label.{property}) tidak sama dengan $t(label.password)",
   "IS_NOT_EXISTS": "$t(label.{property}) sudah ada",
   "IS_EXISTS": "$t(label.{property}) tidak ditemukan",
-  "IS_IN": "$t(label.{property}) harus salah satu nilai berikut: {constraints.0}"
+  "IS_IN": "$t(label.{property}) harus salah satu nilai berikut: {constraints.0}",
+  "IS_UUID": "t(label.{property}) harus berupa uuid"
 }

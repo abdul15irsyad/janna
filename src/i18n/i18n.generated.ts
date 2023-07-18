@@ -5,6 +5,10 @@ export type I18nTranslations = {
     "common": {
         "HELLO_WORLD": string;
     };
+    "error": {
+        "NOT_FOUND": string;
+        "CANNOT_DELETE_HAVE_CHILDREN": string;
+    };
     "label": {
         "id": string;
         "user": string;
@@ -16,7 +20,6 @@ export type I18nTranslations = {
     };
     "validation": {
         "IS_NOT_EMPTY": string;
-        "NOT_FOUND": string;
         "IS_STRING": string;
         "IS_STRONG_PASSWORD": string;
         "IS_EMAIL": string;
@@ -24,6 +27,7 @@ export type I18nTranslations = {
         "IS_NOT_EXISTS": string;
         "IS_EXISTS": string;
         "IS_IN": string;
+        "IS_UUID": string;
     };
 };
 export type I18nPath = Path<I18nTranslations>;

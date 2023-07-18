@@ -26,6 +26,7 @@ export abstract class BaseEntity {
     name: 'deleted_at',
     nullable: true,
     type: 'timestamp with time zone',
+    select: false,
   })
   deletedAt?: Date;
 }

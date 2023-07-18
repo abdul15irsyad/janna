@@ -13,6 +13,7 @@ import {
   DB_PORT,
   DB_USERNAME,
 } from './database/database.config';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import {
     }),
     MailModule,
     UserModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

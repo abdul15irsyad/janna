@@ -70,7 +70,7 @@ export class UserController {
       const user = await this.userService.findOneBy({ id });
       if (isEmpty(user))
         throw new NotFoundException(
-          i18n.t('validation.NOT_FOUND', {
+          i18n.t('error.NOT_FOUND', {
             args: { property: 'user' },
           }),
         );
@@ -93,7 +93,7 @@ export class UserController {
       const user = await this.userService.findOneBy({ id });
       if (isEmpty(user))
         throw new NotFoundException(
-          i18n.t('validation.NOT_FOUND', {
+          i18n.t('error.NOT_FOUND', {
             args: { property: 'user' },
           }),
         );
@@ -121,7 +121,7 @@ export class UserController {
       const user = await this.userService.findOneBy({ id });
       if (isEmpty(user))
         throw new NotFoundException(
-          i18n.t('validation.NOT_FOUND', {
+          i18n.t('error.NOT_FOUND', {
             args: { property: 'user' },
           }),
         );

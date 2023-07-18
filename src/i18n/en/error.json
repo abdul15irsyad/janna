@@ -1,0 +1,4 @@
+{
+  "NOT_FOUND": "$t(label.{property}) not found",
+  "CANNOT_DELETE_HAVE_CHILDREN": "failed to delete $t(label.{property}), Because it has data $t(label.{children})"
+}

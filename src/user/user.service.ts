@@ -13,7 +13,9 @@ import { FindAllUser } from './interfaces/find-all-user.interface';
 
 @Injectable()
 export class UserService extends BaseService<User> {
-  protected relations: FindOptionsRelations<User> = {};
+  protected relations: FindOptionsRelations<User> = {
+    role: true,
+  };
 
   constructor(
     @InjectRepository(User)
@@ -28,13 +30,22 @@ export class UserService extends BaseService<User> {
     search,
     orderBy,
     orderDir,
+    roleId,
   }: FindAllUser = {}) {
     page = page ?? 1;
     orderBy = orderBy ?? 'createdAt';
     orderDir = orderDir ?? 'asc';
-    const filter: FindOptionsWhere<User> = {};
+    const filter: FindOptionsWhere<User> = {
+      roleId: roleId ?? undefined,
+    };
     const findOptionsWhere: FindOptionsWhere<User> | FindOptionsWhere<User>[] =
-      search ? [{ name: ILike(`%${search}%`), ...filter }] : filter;
+      search
+        ? [
+            { name: ILike(`%${search}%`), ...filter },
+            { username: ILike(`%${search}%`), ...filter },
+            { email: ILike(`%${search}%`), ...filter },
+          ]
+        : filter;
     const totalAllData = await this.UserRepo.countBy(findOptionsWhere);
     const data = await this.UserRepo.find({
       where: findOptionsWhere,
