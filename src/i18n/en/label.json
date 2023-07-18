@@ -4,5 +4,6 @@
   "username": "username",
   "email": "email",
   "password": "password",
-  "confirmPassword": "confirm password"
+  "confirmPassword": "confirm password",
+  "orderBy": "orderBy"
 }

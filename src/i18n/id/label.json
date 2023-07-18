@@ -4,5 +4,6 @@
   "username": "username",
   "email": "email",
   "password": "kata sandi",
-  "confirmPassword": "konfirmasi kata sandi"
+  "confirmPassword": "konfirmasi kata sandi",
+  "orderBy": "orderBy"
 }

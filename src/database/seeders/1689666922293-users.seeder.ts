@@ -30,15 +30,12 @@ export default class UsersSeeder extends Seeder {
         password: 'x0TcLtjV22xXtDI',
       });
       for (let i = users.length; i < 20; i++) {
-        const fullName = faker.person.fullName();
+        const fullName = faker.name.fullName();
         users.push({
           name: fullName,
           username: fullName.replace(' ', '').toLowerCase(),
           email: faker.internet
-            .email({
-              firstName: fullName.split(' ')[0],
-              lastName: fullName.split(' ')[1],
-            })
+            .email(fullName.split(' ')[0], fullName.split(' ')[1])
             .toLowerCase(),
           emailVerifiedAt: random([null, dayjs().toDate()]),
         });

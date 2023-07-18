@@ -6,5 +6,6 @@
   "IS_EMAIL": "$t(label.{property}) harus sesuai format",
   "MATCH_PASSWORD": "$t(label.{property}) tidak sama dengan $t(label.password)",
   "IS_NOT_EXISTS": "$t(label.{property}) sudah ada",
-  "IS_EXISTS": "$t(label.{property}) tidak ditemukan"
+  "IS_EXISTS": "$t(label.{property}) tidak ditemukan",
+  "IS_IN": "$t(label.{property}) harus salah satu nilai berikut: {constraints.0}"
 }

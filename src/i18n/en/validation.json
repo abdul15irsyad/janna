@@ -6,5 +6,6 @@
   "IS_EMAIL": "$t(label.{property}) should be email format",
   "MATCH_PASSWORD": "$t(label.{property}) not match to $t(label.password)",
   "IS_NOT_EXISTS": "$t(label.{property}) is already exists",
-  "IS_EXISTS": "$t(label.{property}) not found"
+  "IS_EXISTS": "$t(label.{property}) not found",
+  "IS_IN": "$t(label.{property}) must be one of the following values: {constraints.0}"
 }

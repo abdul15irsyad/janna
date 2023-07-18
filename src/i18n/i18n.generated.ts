@@ -12,6 +12,7 @@ export type I18nTranslations = {
         "email": string;
         "password": string;
         "confirmPassword": string;
+        "orderBy": string;
     };
     "validation": {
         "IS_NOT_EMPTY": string;
@@ -22,6 +23,7 @@ export type I18nTranslations = {
         "MATCH_PASSWORD": string;
         "IS_NOT_EXISTS": string;
         "IS_EXISTS": string;
+        "IS_IN": string;
     };
 };
 export type I18nPath = Path<I18nTranslations>;
