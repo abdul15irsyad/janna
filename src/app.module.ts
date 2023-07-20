@@ -15,6 +15,7 @@ import {
 } from './database/database.config';
 import { RoleModule } from './role/role.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -40,12 +41,13 @@ import { ServeStaticModule } from '@nestjs/serve-static';
         path: join(__dirname, '/i18n/'),
         watch: true,
       },
-      typesOutputPath: join(__dirname, '../src/i18n/i18n.generated.ts'),
+      typesOutputPath: join(__dirname, '..', 'src/i18n/i18n.generated.ts'),
       resolvers: [
         { use: QueryResolver, options: ['lang'] },
         AcceptLanguageResolver,
       ],
     }),
+    RedisModule,
     MailModule,
     UserModule,
     RoleModule,

@@ -22,13 +22,16 @@ import { I18nTranslations } from '../i18n/i18n.generated';
 import { isEmpty } from 'class-validator';
 import { FindAllRoleDto } from './dto/find-all-role.dto';
 import { UserService } from '../user/user.service';
-import { FindAllUserDto } from 'src/user/dto/find-all-user.dto';
+import { FindAllUserDto } from '../user/dto/find-all-user.dto';
+import { useCache } from '../shared/utils/cache.util';
+import { RedisService } from '../redis/redis.service';
 
 @Controller('roles')
 export class RoleController {
   constructor(
     @Inject(RoleService) private roleService: RoleService,
     @Inject(UserService) private userService: UserService,
+    @Inject(RedisService) private redisService: RedisService,
   ) {}
 
   @Post()
@@ -38,6 +41,9 @@ export class RoleController {
         ...createRoleDto,
         slug: slugify(createRoleDto.name, { lower: true, strict: true }),
       });
+      // delete cache
+      const cacheKeys = await this.redisService.keys(`roles:*`);
+      await this.redisService.del(cacheKeys);
       return {
         message: 'create role successfull',
         data: newRole,
@@ -50,8 +56,10 @@ export class RoleController {
   @Get()
   async findAll(@Query() findAllRoleDto?: FindAllRoleDto) {
     try {
-      const { data, totalAllData, totalPage } =
-        await this.roleService.findWithPagination(findAllRoleDto);
+      const { data, totalAllData, totalPage } = await useCache(
+        `roles:${JSON.stringify(findAllRoleDto)}`,
+        () => this.roleService.findWithPagination(findAllRoleDto),
+      );
       return {
         message: 'read all roles',
         meta: {
@@ -73,7 +81,9 @@ export class RoleController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const role = await this.roleService.findOneBy({ id });
+      const role = await useCache(`role:${id}`, () =>
+        this.roleService.findOneBy({ id }),
+      );
       if (isEmpty(role))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
@@ -96,7 +106,9 @@ export class RoleController {
     @Query() findAllUserDto?: FindAllUserDto,
   ) {
     try {
-      const role = await this.roleService.findOneBy({ id });
+      const role = await useCache(`role:${id}`, () =>
+        this.roleService.findOneBy({ id }),
+      );
       if (isEmpty(role))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
@@ -130,7 +142,9 @@ export class RoleController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const role = await this.roleService.findOneBy({ id });
+      const role = await useCache(`role:${id}`, () =>
+        this.roleService.findOneBy({ id }),
+      );
       if (isEmpty(role))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
@@ -141,6 +155,9 @@ export class RoleController {
         ...updateRoleDto,
         slug: slugify(updateRoleDto.name, { lower: true, strict: true }),
       });
+      // delete cache
+      const cacheKeys = await this.redisService.keys(`roles:*`);
+      await this.redisService.del([...cacheKeys, `role:${id}`]);
       return {
         message: 'update role successfull',
         data: updatedRole,
@@ -171,6 +188,9 @@ export class RoleController {
           }),
         );
       await this.roleService.softDelete(id);
+      // delete cache
+      const cacheKeys = await this.redisService.keys(`roles:*`);
+      await this.redisService.del([...cacheKeys, `role:${id}`]);
       return {
         message: 'delete role successfull',
       };
