@@ -14,6 +14,7 @@ import {
   DB_USERNAME,
 } from './database/database.config';
 import { RoleModule } from './role/role.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -28,6 +29,10 @@ import { RoleModule } from './role/role.module';
       // entities: [join(__dirname, '**', 'entities', '*.entity.{ts,js}')],
       synchronize: false,
       logging: false,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      renderPath: '/',
     }),
     I18nModule.forRoot({
       fallbackLanguage: 'en',
