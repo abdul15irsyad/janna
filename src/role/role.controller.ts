@@ -87,7 +87,7 @@ export class RoleController {
       if (isEmpty(role))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
-            args: { property: 'role' },
+            args: { property: 'ROLE' },
           }),
         );
       return {
@@ -112,7 +112,7 @@ export class RoleController {
       if (isEmpty(role))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
-            args: { property: 'role' },
+            args: { property: 'ROLE' },
           }),
         );
       const { totalPage, totalAllData, data } =
@@ -148,7 +148,7 @@ export class RoleController {
       if (isEmpty(role))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
-            args: { property: 'role' },
+            args: { property: 'ROLE' },
           }),
         );
       const updatedRole = await this.roleService.update(id, {
@@ -177,14 +177,14 @@ export class RoleController {
       if (isEmpty(role))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
-            args: { property: 'role' },
+            args: { property: 'ROLE' },
           }),
         );
       const usersCount = await this.roleService.countBy({ id });
       if (usersCount > 0)
         throw new BadRequestException(
           i18n.t('error.CANNOT_DELETE_HAVE_CHILDREN', {
-            args: { property: 'role', children: 'user' },
+            args: { property: 'ROLE', children: 'USER' },
           }),
         );
       await this.roleService.softDelete(id);

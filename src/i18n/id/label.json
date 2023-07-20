@@ -1,6 +1,7 @@
 {
   "ID": "id",
   "USER": "user",
+  "ROLE": "role",
   "NAME": "nama",
   "USERNAME": "username",
   "EMAIL": "email",

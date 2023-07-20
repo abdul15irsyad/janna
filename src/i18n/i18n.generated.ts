@@ -12,6 +12,7 @@ export type I18nTranslations = {
     "label": {
         "ID": string;
         "USER": string;
+        "ROLE": string;
         "NAME": string;
         "USERNAME": string;
         "EMAIL": string;

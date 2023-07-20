@@ -16,6 +16,7 @@ import {
 import { RoleModule } from './role/role.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RedisModule } from './redis/redis.module';
+import { NODE_ENV } from './app.config';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { RedisModule } from './redis/redis.module';
     }),
     I18nModule.forRoot({
       fallbackLanguage: 'en',
+      logging: NODE_ENV !== 'production',
       loaderOptions: {
         path: join(__dirname, '/i18n/'),
         watch: true,

@@ -71,7 +71,7 @@ export class UserController {
       if (isEmpty(user))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
-            args: { property: 'user' },
+            args: { property: 'USER' },
           }),
         );
       return {
@@ -94,7 +94,7 @@ export class UserController {
       if (isEmpty(user))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
-            args: { property: 'user' },
+            args: { property: 'USER' },
           }),
         );
       const updatedUser = await this.userService.update(id, {
@@ -122,7 +122,7 @@ export class UserController {
       if (isEmpty(user))
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
-            args: { property: 'user' },
+            args: { property: 'USER' },
           }),
         );
       await this.userService.softDelete(id);
