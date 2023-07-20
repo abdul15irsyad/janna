@@ -10,13 +10,19 @@ export type I18nTranslations = {
         "CANNOT_DELETE_HAVE_CHILDREN": string;
     };
     "label": {
-        "id": string;
-        "user": string;
-        "username": string;
-        "email": string;
-        "password": string;
-        "confirmPassword": string;
-        "orderBy": string;
+        "ID": string;
+        "USER": string;
+        "NAME": string;
+        "USERNAME": string;
+        "EMAIL": string;
+        "PASSWORD": string;
+        "CONFIRM_PASSWORD": string;
+        "PAGE": string;
+        "LIMIT": string;
+        "SEARCH": string;
+        "ORDER_BY": string;
+        "ORDER_DIR": string;
+        "ROLE_ID": string;
     };
     "validation": {
         "IS_NOT_EMPTY": string;
@@ -28,6 +34,7 @@ export type I18nTranslations = {
         "IS_EXISTS": string;
         "IS_IN": string;
         "IS_UUID": string;
+        "IS_INT": string;
     };
 };
 export type I18nPath = Path<I18nTranslations>;

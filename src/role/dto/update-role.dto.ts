@@ -5,7 +5,9 @@ import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class UpdateRoleDto extends PartialType(CreateRoleDto) {
   @IsNotEmpty({
-    message: i18nValidationMessage('validation.IS_NOT_EMPTY'),
+    message: i18nValidationMessage('validation.IS_NOT_EMPTY', {
+      property: 'ID',
+    }),
   })
   id: string;
 }

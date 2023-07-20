@@ -1,9 +1,15 @@
 {
-  "id": "id",
-  "user": "user",
-  "username": "username",
-  "email": "email",
-  "password": "kata sandi",
-  "confirmPassword": "konfirmasi kata sandi",
-  "orderBy": "orderBy"
+  "ID": "id",
+  "USER": "user",
+  "NAME": "nama",
+  "USERNAME": "username",
+  "EMAIL": "email",
+  "PASSWORD": "kata sandi",
+  "CONFIRM_PASSWORD": "konfirmasi kata sandi",
+  "PAGE": "page",
+  "LIMIT": "limit",
+  "SEARCH": "search",
+  "ORDER_BY": "orderBy",
+  "ORDER_DIR": "orderDir",
+  "ROLE_ID": "id role"
 }

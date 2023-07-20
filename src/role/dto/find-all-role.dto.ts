@@ -4,9 +4,15 @@ import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class FindAllRoleDto extends FindAllDto {
   @IsIn(['name', 'createdAt'], {
-    message: i18nValidationMessage('validation.IS_IN'),
+    message: i18nValidationMessage('validation.IS_IN', {
+      property: 'ORDER_BY',
+    }),
   })
-  @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
+  @IsString({
+    message: i18nValidationMessage('validation.IS_STRING', {
+      property: 'ORDER_BY',
+    }),
+  })
   @IsOptional()
   orderBy?: 'name' | 'createdAt';
 }

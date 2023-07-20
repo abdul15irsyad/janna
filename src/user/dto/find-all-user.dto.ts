@@ -6,17 +6,31 @@ import { Role } from '../../role/entities/role.entity';
 
 export class FindAllUserDto extends FindAllDto {
   @IsIn(['name', 'email', 'createdAt'], {
-    message: i18nValidationMessage('validation.IS_IN'),
+    message: i18nValidationMessage('validation.IS_IN', {
+      property: 'ORDER_BY',
+    }),
   })
-  @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
+  @IsString({
+    message: i18nValidationMessage('validation.IS_STRING', {
+      property: 'ORDER_BY',
+    }),
+  })
   @IsOptional()
   orderBy?: 'name' | 'email' | 'createdAt';
 
   @IsExists(
     { entity: Role },
-    { message: i18nValidationMessage('validation.IS_EXISTS') },
+    {
+      message: i18nValidationMessage('validation.IS_EXISTS', {
+        property: 'ROLE_ID',
+      }),
+    },
   )
-  @IsUUID(4, { message: i18nValidationMessage('validation.IS_UUID') })
+  @IsUUID(4, {
+    message: i18nValidationMessage('validation.IS_UUID', {
+      property: 'ROLE_ID',
+    }),
+  })
   @IsOptional()
   roleId?: string;
 }

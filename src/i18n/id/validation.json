@@ -7,5 +7,6 @@
   "IS_NOT_EXISTS": "$t(label.{property}) sudah ada",
   "IS_EXISTS": "$t(label.{property}) tidak ditemukan",
   "IS_IN": "$t(label.{property}) harus salah satu nilai berikut: {constraints.0}",
-  "IS_UUID": "t(label.{property}) harus berupa uuid"
+  "IS_UUID": "$t(label.{property}) harus berupa uuid",
+  "IS_INT": "$t(label.{property}) harus berupa integer (bilangan bulat)"
 }

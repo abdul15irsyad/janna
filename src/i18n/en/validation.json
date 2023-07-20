@@ -7,5 +7,6 @@
   "IS_NOT_EXISTS": "$t(label.{property}) is already exists",
   "IS_EXISTS": "$t(label.{property}) not found",
   "IS_IN": "$t(label.{property}) must be one of the following values: {constraints.0}",
-  "IS_UUID": "t(label.{property}) should be an uuid"
+  "IS_UUID": "$t(label.{property}) should be an uuid",
+  "IS_INT": "$t(label.{property}) must be an integer number"
 }

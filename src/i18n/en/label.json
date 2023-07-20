@@ -1,9 +1,15 @@
 {
-  "id": "id",
-  "user": "user",
-  "username": "username",
-  "email": "email",
-  "password": "password",
-  "confirmPassword": "confirm password",
-  "orderBy": "orderBy"
+  "ID": "id",
+  "USER": "user",
+  "NAME": "name",
+  "USERNAME": "username",
+  "EMAIL": "email",
+  "PASSWORD": "password",
+  "CONFIRM_PASSWORD": "confirm password",
+  "PAGE": "page",
+  "LIMIT": "limit",
+  "SEARCH": "search",
+  "ORDER_BY": "orderBy",
+  "ORDER_DIR": "orderDir",
+  "ROLE_ID": "role id"
 }

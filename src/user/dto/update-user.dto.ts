@@ -7,24 +7,49 @@ import { User } from '../entities/user.entity';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsNotEmpty({
-    message: i18nValidationMessage('validation.IS_NOT_EMPTY'),
+    message: i18nValidationMessage('validation.IS_NOT_EMPTY', {
+      property: 'ID',
+    }),
   })
   id: string;
 
   @IsNotExists(
     { entity: User, field: 'username', isExcludeId: true },
-    { message: i18nValidationMessage('validation.IS_NOT_EXISTS') },
+    {
+      message: i18nValidationMessage('validation.IS_NOT_EXISTS', {
+        property: 'USERNAME',
+      }),
+    },
   )
-  @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
+  @IsString({
+    message: i18nValidationMessage('validation.IS_STRING', {
+      property: 'USERNAME',
+    }),
+  })
   @IsOptional()
   username: string;
 
   @IsNotExists(
     { entity: User, field: 'email', isExcludeId: true },
-    { message: i18nValidationMessage('validation.IS_NOT_EXISTS') },
+    {
+      message: i18nValidationMessage('validation.IS_NOT_EXISTS', {
+        property: 'EMAIL',
+      }),
+    },
   )
-  @IsEmail({}, { message: i18nValidationMessage('validation.IS_EMAIL') })
-  @IsString({ message: i18nValidationMessage('validation.IS_STRING') })
+  @IsEmail(
+    {},
+    {
+      message: i18nValidationMessage('validation.IS_EMAIL', {
+        property: 'EMAIL',
+      }),
+    },
+  )
+  @IsString({
+    message: i18nValidationMessage('validation.IS_STRING', {
+      property: 'EMAIL',
+    }),
+  })
   @IsOptional()
   email: string;
 }
