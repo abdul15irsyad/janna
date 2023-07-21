@@ -3,8 +3,11 @@ import { FindAllDto } from '../../shared/dto/find-all.dto';
 import { i18nValidationMessage } from 'nestjs-i18n';
 import { IsExists } from '../../shared/validators/is-exists.validator';
 import { Role } from '../../role/entities/role.entity';
+import { Field, InputType } from '@nestjs/graphql';
 
+@InputType()
 export class FindAllUserDto extends FindAllDto {
+  @Field(() => String, { nullable: true })
   @IsIn(['name', 'email', 'createdAt'], {
     message: i18nValidationMessage('validation.IS_IN', {
       property: 'ORDER_BY',
@@ -18,6 +21,7 @@ export class FindAllUserDto extends FindAllDto {
   @IsOptional()
   orderBy?: 'name' | 'email' | 'createdAt';
 
+  @Field(() => String, { nullable: true })
   @IsExists(
     { entity: Role },
     {

@@ -1,6 +1,6 @@
 import { Logger, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ORIGINS, PORT } from './app.config';
+import { NODE_ENV, ORIGINS, PORT } from './app.config';
 import { AppModule } from './app.module';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import datasource from './database/database.datasource';
@@ -23,7 +23,7 @@ async function bootstrap() {
   );
   await datasource.initialize();
   await app.listen(PORT, () =>
-    logger.log(`Application running on port ${PORT}`),
+    logger.log(`Application running on port ${PORT}, environment ${NODE_ENV}`),
   );
 }
 bootstrap();

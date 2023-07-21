@@ -11,8 +11,11 @@ import { User } from '../entities/user.entity';
 import { IsNotExists } from '../../shared/validators/is-not-exists.validator';
 import { IsExists } from '../../shared/validators/is-exists.validator';
 import { Role } from '../../role/entities/role.entity';
+import { Field, InputType } from '@nestjs/graphql';
 
+@InputType()
 export class CreateUserDto {
+  @Field(() => String)
   @IsString({
     message: i18nValidationMessage('validation.IS_STRING', {
       property: 'NAME',
@@ -25,6 +28,7 @@ export class CreateUserDto {
   })
   name: string;
 
+  @Field(() => String)
   @IsNotExists(
     { entity: User, field: 'username' },
     {
@@ -45,6 +49,7 @@ export class CreateUserDto {
   })
   username: string;
 
+  @Field(() => String)
   @IsNotExists(
     { entity: User, field: 'email' },
     {
@@ -73,6 +78,7 @@ export class CreateUserDto {
   })
   email: string;
 
+  @Field(() => String)
   @IsStrongPassword(
     { minSymbols: 0 },
     {
@@ -93,11 +99,13 @@ export class CreateUserDto {
   })
   password: string;
 
+  @Field(() => String)
   @ValidateBy(
     {
       name: 'matchPassword',
       validator: {
-        validate: (value, { object }) => value === (object as any).password,
+        validate: (value, { object }) =>
+          value === (object as { password: string }).password,
       },
     },
     {
@@ -113,6 +121,7 @@ export class CreateUserDto {
   })
   confirmPassword: string;
 
+  @Field(() => String)
   @IsExists(
     { entity: Role },
     {

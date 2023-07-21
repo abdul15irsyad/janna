@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 config({ path: '.env' });
 
-type NodeEnvironment = 'development' | 'staging' | 'production' | 'rc';
+type NodeEnvironment = 'development' | 'staging' | 'production';
 export const NODE_ENV =
   (process.env.NODE_ENV as NodeEnvironment) ?? 'development';
 export const APP_NAME = process.env.APP_NAME || 'Janna';

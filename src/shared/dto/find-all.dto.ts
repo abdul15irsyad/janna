@@ -1,3 +1,4 @@
+import { Field, InputType, Int } from '@nestjs/graphql';
 import { Transform } from 'class-transformer';
 import {
   IsIn,
@@ -9,7 +10,9 @@ import {
 } from 'class-validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
 
-export class FindAllDto {
+@InputType()
+export abstract class FindAllDto {
+  @Field(() => Int, { nullable: true })
   @IsInt({
     message: i18nValidationMessage('validation.IS_INT', { property: 'PAGE' }),
   })
@@ -22,6 +25,7 @@ export class FindAllDto {
   @Transform(({ value }) => (isNumberString(value) ? +value : value))
   page?: number;
 
+  @Field(() => Int, { nullable: true })
   @IsInt({
     message: i18nValidationMessage('validation.IS_INT', { property: 'LIMIT' }),
   })
@@ -34,6 +38,7 @@ export class FindAllDto {
   @Transform(({ value }) => (isNumberString(value) ? +value : value))
   limit?: number;
 
+  @Field(() => String, { nullable: true })
   @IsString({
     message: i18nValidationMessage('validation.IS_STRING', {
       property: 'SEARCH',
@@ -47,6 +52,7 @@ export class FindAllDto {
   @IsOptional()
   search?: string;
 
+  @Field(() => String, { nullable: true })
   @IsString({
     message: i18nValidationMessage('validation.IS_STRING', {
       property: 'ORDER_BY',
@@ -60,6 +66,7 @@ export class FindAllDto {
   @IsOptional()
   orderBy?: string;
 
+  @Field(() => String, { nullable: true })
   @IsIn(['ASC', 'DESC', 'asc', 'desc'], {
     message: i18nValidationMessage('validation.IS_IN', {
       property: 'ORDER_DIR',

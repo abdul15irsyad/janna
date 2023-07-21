@@ -9,7 +9,7 @@ import {
 import { BaseEntity } from '../entities/base.entity';
 
 @Injectable()
-export class BaseService<T extends BaseEntity> {
+export abstract class BaseService<T extends BaseEntity> {
   protected repository: Repository<T>;
   protected relations: FindOptionsRelations<T>;
 

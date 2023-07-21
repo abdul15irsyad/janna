@@ -3,7 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MailModule } from './mail/mail.module';
 import { UserModule } from './user/user.module';
-import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import {
+  AcceptLanguageResolver,
+  GraphQLWebsocketResolver,
+  I18nModule,
+  QueryResolver,
+} from 'nestjs-i18n';
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
@@ -17,6 +22,9 @@ import { RoleModule } from './role/role.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { RedisModule } from './redis/redis.module';
 import { NODE_ENV } from './app.config';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { AppResolver } from './app.resolver';
 
 @Module({
   imports: [
@@ -45,9 +53,23 @@ import { NODE_ENV } from './app.config';
       },
       typesOutputPath: join(__dirname, '..', 'src/i18n/i18n.generated.ts'),
       resolvers: [
+        GraphQLWebsocketResolver,
         { use: QueryResolver, options: ['lang'] },
         AcceptLanguageResolver,
       ],
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      path: '/graphql',
+      driver: ApolloDriver,
+      // autoTransformHttpErrors: true,
+      status400ForVariableCoercionErrors: true,
+      sortSchema: true,
+      playground: NODE_ENV !== 'production',
+      autoSchemaFile: join(process.cwd(), 'schema.gql'),
+      useGlobalPrefix: true,
+      csrfPrevention: false,
+      introspection: true,
+      context: ({ req, res }) => ({ req, res }),
     }),
     RedisModule,
     MailModule,
@@ -55,6 +77,6 @@ import { NODE_ENV } from './app.config';
     RoleModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AppResolver],
 })
 export class AppModule {}

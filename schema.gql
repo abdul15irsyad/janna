@@ -1,0 +1,99 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateRoleDto {
+  name: String!
+}
+
+input CreateUserDto {
+  confirmPassword: String!
+  email: String!
+  name: String!
+  password: String!
+  roleId: String!
+  username: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input FindAllRoleDto {
+  limit: Int
+  orderBy: String
+  orderDir: String
+  page: Int
+  search: String
+}
+
+input FindAllUserDto {
+  limit: Int
+  orderBy: String
+  orderDir: String
+  page: Int
+  roleId: String
+  search: String
+}
+
+type Meta {
+  currentPage: Int
+  totalAllData: Float
+  totalData: Int
+  totalPage: Int
+}
+
+type Mutation {
+  createRole(createRoleInput: CreateRoleDto!): Role!
+  createUser(createUserInput: CreateUserDto!): User!
+  deleteRole(id: String!): Boolean!
+  updateRole(updateRoleInput: UpdateRoleDto!): Role!
+}
+
+type PaginatedRole {
+  data: [Role!]!
+  meta: Meta
+}
+
+type PaginatedUser {
+  data: [User!]!
+  meta: Meta
+}
+
+type Query {
+  error: String!
+  role(id: String!): Role!
+  roles(findAllRoleInput: FindAllRoleDto): PaginatedRole!
+  root: String!
+  user(id: String!): User!
+  users(findAllUserInput: FindAllUserDto): PaginatedUser!
+}
+
+type Role {
+  createdAt: DateTime!
+  deletedAt: DateTime!
+  id: String!
+  name: String!
+  slug: String!
+  updatedAt: DateTime!
+  users(findAllUserInput: FindAllUserDto): PaginatedUser
+}
+
+input UpdateRoleDto {
+  id: String!
+  name: String
+}
+
+type User {
+  createdAt: DateTime!
+  deletedAt: DateTime!
+  email: String!
+  emailVerifiedAt: DateTime
+  id: String!
+  name: String!
+  role: Role
+  roleId: String!
+  updatedAt: DateTime!
+  username: String!
+}
