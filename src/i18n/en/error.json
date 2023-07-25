@@ -1,4 +1,7 @@
 {
   "NOT_FOUND": "$t(label.{property}) not found",
-  "CANNOT_DELETE_HAVE_CHILDREN": "failed to delete $t(label.{property}), Because it has data $t(label.{children})"
+  "EMAIL_OR_PASSWORD_INCORRECT": "email/username or $t(label.PASSWORD) incorrect",
+  "CANNOT_DELETE_HAVE_CHILDREN": "failed to delete $t(label.{property}), Because it has data $t(label.{children})",
+  "THE_TOKEN_IS_NOT_REFRESH_TOKEN": "the token is not \"refresh token\"",
+  "EMAIL_HAS_NOT_BEEN_VERIFIED": "email has not been verified"
 }

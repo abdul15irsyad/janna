@@ -1,4 +1,7 @@
 {
   "NOT_FOUND": "$t(label.{property}) tidak ditemukan",
-  "CANNOT_DELETE_HAVE_CHILDREN": "gagal menghapus $t(label.{property}), karna memiliki data $t(label.{children})"
+  "EMAIL_OR_PASSWORD_INCORRECT": "email/username atau $t(label.PASSWORD) salah",
+  "CANNOT_DELETE_HAVE_CHILDREN": "gagal menghapus $t(label.{property}), karna memiliki data $t(label.{children})",
+  "THE_TOKEN_IS_NOT_REFRESH_TOKEN": "token bukan berupa \"refresh token\"",
+  "EMAIL_HAS_NOT_BEEN_VERIFIED": "email belum diverifikasi"
 }

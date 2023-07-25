@@ -21,7 +21,6 @@ export class UserResolver {
     createUserDto: CreateUserDto,
   ) {
     try {
-      console.log('resolver');
       const newUser = await this.userService.create({
         ...createUserDto,
         password: hashPassword(createUserDto.password),

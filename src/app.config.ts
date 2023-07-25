@@ -10,3 +10,10 @@ export const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 export const ORIGINS = process.env.ORIGINS
   ? process.env.ORIGINS.split(',')
   : '*';
+
+export const THROTTLE_TTL = process.env.THROTTLE_TTL
+  ? +process.env.THROTTLE_TTL
+  : 60;
+export const THROTTLE_LIMIT = process.env.THROTTLE_LIMIT
+  ? +process.env.THROTTLE_LIMIT
+  : 10;

@@ -1,4 +1,4 @@
-import { Logger, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NODE_ENV, ORIGINS, PORT } from './app.config';
 import { AppModule } from './app.module';
@@ -15,6 +15,7 @@ async function bootstrap() {
   app.enableCors({ origin: ORIGINS, methods: '*' });
   app.useGlobalFilters(new I18nValidationExceptionFilter());
   app.useGlobalPipes(
+    // new ValidationPipe(),
     new I18nValidationPipe({
       whitelist: true,
       transform: true,

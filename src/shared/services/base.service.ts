@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import {
   DeepPartial,
   FindManyOptions,
+  FindOneOptions,
   FindOptionsRelations,
   FindOptionsWhere,
   Repository,
 } from 'typeorm';
 import { BaseEntity } from '../entities/base.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export abstract class BaseService<T extends BaseEntity> {
@@ -18,7 +20,7 @@ export abstract class BaseService<T extends BaseEntity> {
   }
 
   async create(entity: DeepPartial<T>): Promise<T> {
-    const createdEntity = this.repository.create(entity);
+    const createdEntity = this.repository.create({ id: uuidv4(), ...entity });
     await this.repository.save(createdEntity);
     return this.findOneBy({ id: createdEntity?.id as any });
   }
@@ -31,6 +33,10 @@ export abstract class BaseService<T extends BaseEntity> {
     where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
   ): Promise<number> {
     return this.repository.countBy(where);
+  }
+
+  async findOne(options: FindOneOptions<T>) {
+    return this.repository.findOne(options);
   }
 
   async findOneBy(

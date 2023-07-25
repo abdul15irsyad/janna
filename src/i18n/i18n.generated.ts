@@ -7,7 +7,10 @@ export type I18nTranslations = {
     };
     "error": {
         "NOT_FOUND": string;
+        "EMAIL_OR_PASSWORD_INCORRECT": string;
         "CANNOT_DELETE_HAVE_CHILDREN": string;
+        "THE_TOKEN_IS_NOT_REFRESH_TOKEN": string;
+        "EMAIL_HAS_NOT_BEEN_VERIFIED": string;
     };
     "label": {
         "ID": string;
