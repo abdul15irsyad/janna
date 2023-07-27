@@ -1,0 +1,36 @@
+version: '1'
+name: janna
+services:
+  redis:
+    container_name: janna-redis
+    image: redis:6.0.20-alpine
+
+  postgres:
+    container_name: janna-postgres
+    image: postgres:15.1-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Qwerty123
+      POSTGRES_DB: janna
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    container_name: janna-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 4000:3000
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=janna
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=Qwerty123
+      - REDIS_HOST=redis
+
+volumes:
+  postgres_data:
