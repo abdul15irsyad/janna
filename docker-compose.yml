@@ -17,6 +17,7 @@ services:
 
   api:
     container_name: janna-api
+    image: abdul15irsyad/janna
     build:
       context: .
       dockerfile: Dockerfile

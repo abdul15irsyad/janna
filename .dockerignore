@@ -1,11 +1,21 @@
 # compiled output
 /node_modules
 /dist
+/test
 
 # docker file
 .dockerignore
 docker-compose.yml
 Dockerfile
+
+# git
+/.git
+.gitignore
+
+# extension file
+.env.example
+.prettierrc
+.eslintrc.js
 
 # environment
 .env
