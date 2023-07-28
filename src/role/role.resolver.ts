@@ -12,6 +12,7 @@ import {
   Inject,
   NotFoundException,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { handleError } from '../shared/utils/error.util';
@@ -29,7 +30,9 @@ import { UserService } from '../user/user.service';
 import { FindAllUserDto } from '../user/dto/find-all-user.dto';
 import { PaginatedRole } from './object-types/paginated-role.object-type';
 import { PaginatedUser } from '../user/object-types/paginated-user.object-type';
+import { JwtAuthGuard } from '../auth/guards/auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Resolver(() => Role)
 export class RoleResolver {
   constructor(

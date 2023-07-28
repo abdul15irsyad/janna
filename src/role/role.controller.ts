@@ -11,6 +11,7 @@ import {
   ParseUUIDPipe,
   Query,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -25,7 +26,9 @@ import { UserService } from '../user/user.service';
 import { FindAllUserDto } from '../user/dto/find-all-user.dto';
 import { useCache } from '../shared/utils/cache.util';
 import { RedisService } from '../redis/redis.service';
+import { JwtAuthGuard } from '../auth/guards/auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('roles')
 export class RoleController {
   constructor(

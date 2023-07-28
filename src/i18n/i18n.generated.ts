@@ -9,6 +9,7 @@ export type I18nTranslations = {
         "NOT_FOUND": string;
         "EMAIL_OR_PASSWORD_INCORRECT": string;
         "CANNOT_DELETE_HAVE_CHILDREN": string;
+        "TOKEN_EXPIRED": string;
         "THE_TOKEN_IS_NOT_REFRESH_TOKEN": string;
         "EMAIL_HAS_NOT_BEEN_VERIFIED": string;
     };
