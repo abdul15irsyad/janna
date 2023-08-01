@@ -8,8 +8,11 @@ import {
 import { User } from '../../user/entities/user.entity';
 import { IsNotExists } from '../../shared/validators/is-not-exists.validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
+import { Field, InputType } from '@nestjs/graphql';
 
+@InputType()
 export class RegisterDto {
+  @Field(() => String)
   @IsString({
     message: i18nValidationMessage('validation.IS_STRING', {
       property: 'NAME',
@@ -22,6 +25,7 @@ export class RegisterDto {
   })
   name: string;
 
+  @Field(() => String)
   @IsNotExists(
     { entity: User, field: 'username' },
     {
@@ -42,6 +46,7 @@ export class RegisterDto {
   })
   username: string;
 
+  @Field(() => String)
   @IsNotExists(
     { entity: User, field: 'email' },
     {
@@ -70,6 +75,7 @@ export class RegisterDto {
   })
   email: string;
 
+  @Field(() => String)
   @IsStrongPassword(
     { minSymbols: 0 },
     {
@@ -90,6 +96,7 @@ export class RegisterDto {
   })
   password: string;
 
+  @Field(() => String)
   @ValidateBy(
     {
       name: 'matchPassword',

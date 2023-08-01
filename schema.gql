@@ -2,6 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AccessToken {
+  expiresIn: Float!
+  grantType: String!
+  token: String!
+}
+
 input CreateRoleDto {
   name: String!
 }
@@ -37,6 +43,16 @@ input FindAllUserDto {
   search: String
 }
 
+input LoginDto {
+  email: String!
+  password: String!
+}
+
+type LoginObject {
+  accessToken: AccessToken!
+  refreshToken: RefreshToken!
+}
+
 type Meta {
   currentPage: Int
   totalAllData: Float
@@ -48,6 +64,9 @@ type Mutation {
   createRole(createRoleInput: CreateRoleDto!): Role!
   createUser(createUserInput: CreateUserDto!): User!
   deleteRole(id: String!): Boolean!
+  login(loginInput: LoginDto!): LoginObject!
+  refreshToken: RefreshTokenObject!
+  register(registerInput: RegisterDto!): User!
   updateRole(updateRoleInput: UpdateRoleDto!): Role!
 }
 
@@ -68,6 +87,24 @@ type Query {
   root: String!
   user(id: String!): User!
   users(findAllUserInput: FindAllUserDto): PaginatedUser!
+}
+
+type RefreshToken {
+  expiresIn: Float!
+  token: String!
+}
+
+type RefreshTokenObject {
+  accessToken: AccessToken!
+  refreshToken: RefreshToken!
+}
+
+input RegisterDto {
+  confirmPassword: String!
+  email: String!
+  name: String!
+  password: String!
+  username: String!
 }
 
 type Role {
