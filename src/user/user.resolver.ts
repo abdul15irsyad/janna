@@ -1,6 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './entities/user.entity';
 import {
+  BadRequestException,
   Inject,
   NotFoundException,
   ParseUUIDPipe,
@@ -17,6 +18,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { hashPassword } from '../shared/utils/password.util';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SUPER_ADMINISTRATOR } from '../role/role.config';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
@@ -94,6 +96,12 @@ export class UserResolver {
             args: { property: 'USER' },
           }),
         );
+      if (user.role.slug === SUPER_ADMINISTRATOR)
+        throw new BadRequestException(
+          i18n.t('error.CANNOT_UPDATE_SUPER_ADMINISTRATOR_USER', {
+            args: {},
+          }),
+        );
       const updatedUser = await this.userService.update(updateUserInput.id, {
         ...updateUserInput,
         password: updateUserInput.password
@@ -117,6 +125,12 @@ export class UserResolver {
         throw new NotFoundException(
           i18n.t('error.NOT_FOUND', {
             args: { property: 'USER' },
+          }),
+        );
+      if (user.role.slug === SUPER_ADMINISTRATOR)
+        throw new BadRequestException(
+          i18n.t('error.CANNOT_DELETE_SUPER_ADMINISTRATOR_USER', {
+            args: {},
           }),
         );
       await this.userService.softDelete(id);

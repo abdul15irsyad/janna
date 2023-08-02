@@ -7,5 +7,7 @@
   "EMAIL_HAS_NOT_BEEN_VERIFIED": "email belum diverifikasi",
   "OLD_PASSWORD_IS_INCORRECT": "$t(label.OLD_PASSWORD) salah",
   "CANNOT_UPDATE_ROLE_SUPER_ADMINISTRATOR": "tidak dapat mengubah role super administrator",
-  "CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR": "tidak dapat menghapus role super administrator"
+  "CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR": "tidak dapat menghapus role super administrator",
+  "CANNOT_UPDATE_SUPER_ADMINISTRATOR_USER": "tidak dapat mdngubah pengguna dengan role super administrator",
+  "CANNOT_DELETE_SUPER_ADMINISTRATOR_USER": "tidak dapat menghapus pengguna dengan role super administrator"
 }

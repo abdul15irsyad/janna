@@ -27,6 +27,8 @@ export type I18nTranslations = {
         "OLD_PASSWORD_IS_INCORRECT": string;
         "CANNOT_UPDATE_ROLE_SUPER_ADMINISTRATOR": string;
         "CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR": string;
+        "CANNOT_UPDATE_SUPER_ADMINISTRATOR_USER": string;
+        "CANNOT_DELETE_SUPER_ADMINISTRATOR_USER": string;
     };
     "label": {
         "ID": string;
