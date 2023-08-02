@@ -13,6 +13,8 @@ import { handleError } from '../../shared/utils/error.util';
 import { JwtAuthGuard } from '../guards/auth.guard';
 import { UpdateAuthUserDto } from '../dto/update-auth-user.dto';
 import { UpdateAuthUserPasswordDto } from '../dto/update-auth-user-password.dto';
+import { I18n, I18nContext } from 'nestjs-i18n';
+import { I18nTranslations } from '../../i18n/i18n.generated';
 
 @UseGuards(JwtAuthGuard)
 @Controller('auth/user')
@@ -20,10 +22,13 @@ export class ProfileController {
   constructor(@Inject(ProfileService) private profileService: ProfileService) {}
 
   @Get()
-  async authUser(@AuthUser() authUser: User) {
+  async authUser(
+    @AuthUser() authUser: User,
+    @I18n() i18n: I18nContext<I18nTranslations>,
+  ) {
     try {
       return {
-        message: 'get auth user',
+        message: i18n.t('common.GET_AUTH_USER', { args: {} }),
         data: authUser,
       };
     } catch (error) {
@@ -34,6 +39,7 @@ export class ProfileController {
   @Patch()
   async update(
     @AuthUser() authUser: User,
+    @I18n() i18n: I18nContext<I18nTranslations>,
     @Body() updateAuthUserDto?: UpdateAuthUserDto,
   ) {
     try {
@@ -47,7 +53,7 @@ export class ProfileController {
       });
 
       return {
-        message: 'update auth user successfull',
+        message: i18n.t('common.UPDATE_AUTH_USER_SUCCESSFULL', { args: {} }),
         data: updatedUser,
       };
     } catch (error) {
@@ -58,6 +64,7 @@ export class ProfileController {
   @Patch('password')
   async updatePassword(
     @AuthUser() authUser: User,
+    @I18n() i18n: I18nContext<I18nTranslations>,
     @Body() updateAuthUserPasswordInput?: UpdateAuthUserPasswordDto,
   ) {
     try {
@@ -68,7 +75,9 @@ export class ProfileController {
         newPassword,
       });
       return {
-        message: 'update auth user password successfull',
+        message: i18n.t('common.UPDATE_AUTH_USER_PASSWORD_SUCCESSFULL', {
+          args: {},
+        }),
       };
     } catch (error) {
       handleError(error);

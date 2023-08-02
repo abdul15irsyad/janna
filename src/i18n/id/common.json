@@ -1,3 +1,15 @@
 {
-  "HELLO_WORLD": "Halo Dunia"
+  "HELLO_WORLD": "Halo Dunia",
+  "LOGIN_SUCCESSFULL": "masuk berhasil",
+  "REFRESH_TOKEN_SUCCESSFULL": "refresh token berhasil",
+  "REGISTER_SUCCESSFULL": "daftar berhasil",
+  "GET_AUTH_USER": "mengambil pengguna yang terotentikasi",
+  "UPDATE_AUTH_USER_SUCCESSFULL": "mengubah pengguna yang terotentikasi berhasil",
+  "UPDATE_AUTH_USER_PASSWORD_SUCCESSFULL": "mengubah kata sandi pengguna yang terotentikasi berhasil",
+  "CREATE_SUCCESSFULL": "membuat $t(label.{property}) berhasil",
+  "READ_ALL": "mengambil semua $t(label.{property})",
+  "READ": "mengambil $t(label.{property})",
+  "UPDATE_SUCCESSFULL": "mengubah $t(label.{property}) berhasil",
+  "DELETE_SUCCESSFULL": "hapus $t(label.{property}) berhasil",
+  "READ_ROLE_USERS": "mengambil semua pengguna yang ada di role"
 }

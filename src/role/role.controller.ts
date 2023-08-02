@@ -27,6 +27,7 @@ import { FindAllUserDto } from '../user/dto/find-all-user.dto';
 import { useCache } from '../shared/utils/cache.util';
 import { RedisService } from '../redis/redis.service';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
+import { SUPER_ADMINISTRATOR } from './role.config';
 
 @UseGuards(JwtAuthGuard)
 @Controller('roles')
@@ -38,7 +39,10 @@ export class RoleController {
   ) {}
 
   @Post()
-  async create(@Body() createRoleDto: CreateRoleDto) {
+  async create(
+    @Body() createRoleDto: CreateRoleDto,
+    @I18n() i18n: I18nContext<I18nTranslations>,
+  ) {
     try {
       const newRole = await this.roleService.create({
         ...createRoleDto,
@@ -48,7 +52,9 @@ export class RoleController {
       const cacheKeys = await this.redisService.keys(`roles:*`);
       await this.redisService.del(cacheKeys);
       return {
-        message: 'create role successfull',
+        message: i18n.t('common.CREATE_SUCCESSFULL', {
+          args: { property: 'ROLE' },
+        }),
         data: newRole,
       };
     } catch (error) {
@@ -57,14 +63,19 @@ export class RoleController {
   }
 
   @Get()
-  async findAll(@Query() findAllRoleDto?: FindAllRoleDto) {
+  async findAll(
+    @I18n() i18n: I18nContext<I18nTranslations>,
+    @Query() findAllRoleDto?: FindAllRoleDto,
+  ) {
     try {
       const { data, totalAllData, totalPage } = await useCache(
         `roles:${JSON.stringify(findAllRoleDto)}`,
         () => this.roleService.findWithPagination(findAllRoleDto),
       );
       return {
-        message: 'read all roles',
+        message: i18n.t('common.READ_ALL', {
+          args: { property: 'ROLE' },
+        }),
         meta: {
           currentPage: data.length > 0 ? findAllRoleDto?.page ?? 1 : null,
           totalPage,
@@ -94,7 +105,9 @@ export class RoleController {
           }),
         );
       return {
-        message: 'read role',
+        message: i18n.t('common.READ', {
+          args: { property: 'ROLE' },
+        }),
         data: role,
       };
     } catch (error) {
@@ -124,7 +137,9 @@ export class RoleController {
           roleId: id,
         });
       return {
-        message: 'read role users',
+        message: i18n.t('common.READ_ROLE_USERS', {
+          args: { property: 'ROLE' },
+        }),
         meta: {
           currentPage: data.length > 0 ? findAllUserDto?.page ?? 1 : null,
           totalPage,
@@ -154,6 +169,12 @@ export class RoleController {
             args: { property: 'ROLE' },
           }),
         );
+      if (role.slug === SUPER_ADMINISTRATOR)
+        throw new BadRequestException(
+          i18n.t('error.CANNOT_UPDATE_ROLE_SUPER_ADMINISTRATOR', {
+            args: {},
+          }),
+        );
       const updatedRole = await this.roleService.update(id, {
         ...updateRoleDto,
         slug: slugify(updateRoleDto.name, { lower: true, strict: true }),
@@ -162,7 +183,9 @@ export class RoleController {
       const cacheKeys = await this.redisService.keys(`roles:*`);
       await this.redisService.del([...cacheKeys, `role:${id}`]);
       return {
-        message: 'update role successfull',
+        message: i18n.t('common.UPDATE_SUCCESSFULL', {
+          args: { property: 'ROLE' },
+        }),
         data: updatedRole,
       };
     } catch (error) {
@@ -183,6 +206,12 @@ export class RoleController {
             args: { property: 'ROLE' },
           }),
         );
+      if (role.slug === SUPER_ADMINISTRATOR)
+        throw new BadRequestException(
+          i18n.t('error.CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR', {
+            args: {},
+          }),
+        );
       const usersCount = await this.userService.countBy({ roleId: id });
       if (usersCount > 0)
         throw new BadRequestException(
@@ -195,7 +224,9 @@ export class RoleController {
       const cacheKeys = await this.redisService.keys(`roles:*`);
       await this.redisService.del([...cacheKeys, `role:${id}`]);
       return {
-        message: 'delete role successfull',
+        message: i18n.t('common.DELETE_SUCCESSFULL', {
+          args: { property: 'ROLE' },
+        }),
       };
     } catch (error) {
       handleError(error);

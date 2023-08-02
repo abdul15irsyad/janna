@@ -64,12 +64,14 @@ type Mutation {
   createRole(createRoleInput: CreateRoleDto!): Role!
   createUser(createUserInput: CreateUserDto!): User!
   deleteRole(id: String!): Boolean!
+  deleteUser(id: String!): Boolean!
   login(loginInput: LoginDto!): LoginObject!
   refreshToken: RefreshTokenObject!
   register(registerInput: RegisterDto!): User!
   updateAuthUser(updateAuthUserInput: UpdateAuthUserDto): User!
   updateAuthUserPassword(updateAuthUserPasswordInput: UpdateAuthUserPasswordDto!): Boolean!
   updateRole(updateRoleInput: UpdateRoleDto!): Role!
+  updateUser(updateUserInput: UpdateUserDto!): User!
 }
 
 type PaginatedRole {
@@ -135,6 +137,16 @@ input UpdateAuthUserPasswordDto {
 input UpdateRoleDto {
   id: String!
   name: String
+}
+
+input UpdateUserDto {
+  confirmPassword: String
+  email: String
+  id: String!
+  name: String
+  password: String
+  roleId: String
+  username: String
 }
 
 type User {

@@ -4,6 +4,18 @@ import { Path } from "nestjs-i18n";
 export type I18nTranslations = {
     "common": {
         "HELLO_WORLD": string;
+        "LOGIN_SUCCESSFULL": string;
+        "REFRESH_TOKEN_SUCCESSFULL": string;
+        "REGISTER_SUCCESSFULL": string;
+        "GET_AUTH_USER": string;
+        "UPDATE_AUTH_USER_SUCCESSFULL": string;
+        "UPDATE_AUTH_USER_PASSWORD_SUCCESSFULL": string;
+        "CREATE_SUCCESSFULL": string;
+        "READ_ALL": string;
+        "READ": string;
+        "UPDATE_SUCCESSFULL": string;
+        "DELETE_SUCCESSFULL": string;
+        "READ_ROLE_USERS": string;
     };
     "error": {
         "NOT_FOUND": string;
@@ -13,6 +25,8 @@ export type I18nTranslations = {
         "THE_TOKEN_IS_NOT_REFRESH_TOKEN": string;
         "EMAIL_HAS_NOT_BEEN_VERIFIED": string;
         "OLD_PASSWORD_IS_INCORRECT": string;
+        "CANNOT_UPDATE_ROLE_SUPER_ADMINISTRATOR": string;
+        "CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR": string;
     };
     "label": {
         "ID": string;

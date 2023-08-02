@@ -1,3 +1,15 @@
 {
-  "HELLO_WORLD": "Hello World"
+  "HELLO_WORLD": "Hello World",
+  "LOGIN_SUCCESSFULL": "login successfull",
+  "REFRESH_TOKEN_SUCCESSFULL": "refresh token successfull",
+  "REGISTER_SUCCESSFULL": "register successfull",
+  "GET_AUTH_USER": "get auth user",
+  "UPDATE_AUTH_USER_SUCCESSFULL": "update auth user successfull",
+  "UPDATE_AUTH_USER_PASSWORD_SUCCESSFULL": "update auth user password successfull",
+  "CREATE_SUCCESSFULL": "create $t(label.{property}) successfull",
+  "READ_ALL": "read all $t(label.{property})",
+  "READ": "read $t(label.{property})",
+  "UPDATE_SUCCESSFULL": "update $t(label.{property}) successfull",
+  "DELETE_SUCCESSFULL": "delete $t(label.{property}) successfull",
+  "READ_ROLE_USERS": "read role users"
 }

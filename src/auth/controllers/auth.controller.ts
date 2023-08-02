@@ -18,6 +18,8 @@ import { LoginDto } from '../dto/login.dto';
 import { Request } from 'express';
 import { AuthService } from '../services/auth.service';
 import { isEmpty } from 'class-validator';
+import { I18n, I18nContext } from 'nestjs-i18n';
+import { I18nTranslations } from '../../i18n/i18n.generated';
 
 @UseGuards(ThrottlerGuard)
 @UseInterceptors(ClassSerializerInterceptor)
@@ -27,7 +29,10 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
+  async login(
+    @Body() loginDto: LoginDto,
+    @I18n() i18n: I18nContext<I18nTranslations>,
+  ) {
     try {
       const { email, password } = loginDto;
       const { accessToken, refreshToken } = await this.authService.login(
@@ -36,7 +41,7 @@ export class AuthController {
       );
 
       return {
-        message: 'login successfull',
+        message: i18n.t('common.LOGIN_SUCCESSFULL', { args: {} }),
         data: {
           accessToken,
           refreshToken,
@@ -49,7 +54,10 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
-  async refreshToken(@Req() req: Request) {
+  async refreshToken(
+    @Req() req: Request,
+    @I18n() i18n: I18nContext<I18nTranslations>,
+  ) {
     try {
       // get bearer token
       const token = this.authService.getBearerTokenFromHeaders(req?.headers);
@@ -60,7 +68,7 @@ export class AuthController {
       );
 
       return {
-        message: 'refresh token successfull',
+        message: i18n.t('common.REFRESH_TOKEN_SUCCESSFULL', { args: {} }),
         data: {
           accessToken,
           refreshToken,
@@ -73,12 +81,15 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
+  async register(
+    @Body() registerDto: RegisterDto,
+    @I18n() i18n: I18nContext<I18nTranslations>,
+  ) {
     try {
       const newUser = await this.authService.register(registerDto);
 
       return {
-        message: 'register successfull',
+        message: i18n.t('common.REGISTER_SUCCESSFULL', { args: {} }),
         data: newUser,
       };
     } catch (error) {

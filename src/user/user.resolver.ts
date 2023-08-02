@@ -16,6 +16,7 @@ import { isEmpty } from 'class-validator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { hashPassword } from '../shared/utils/password.util';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
@@ -75,6 +76,51 @@ export class UserResolver {
           }),
         );
       return user;
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  @Mutation(() => User, { name: 'updateUser' })
+  async update(
+    @Args('updateUserInput') updateUserInput: UpdateUserDto,
+    @I18n() i18n: I18nContext<I18nTranslations>,
+  ) {
+    try {
+      const user = await this.userService.findOneBy({ id: updateUserInput.id });
+      if (isEmpty(user))
+        throw new NotFoundException(
+          i18n.t('error.NOT_FOUND', {
+            args: { property: 'USER' },
+          }),
+        );
+      const updatedUser = await this.userService.update(updateUserInput.id, {
+        ...updateUserInput,
+        password: updateUserInput.password
+          ? hashPassword(updateUserInput.password)
+          : undefined,
+      });
+      return updatedUser;
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  @Mutation(() => Boolean, { name: 'deleteUser' })
+  async remove(
+    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
+    @I18n() i18n: I18nContext<I18nTranslations>,
+  ) {
+    try {
+      const user = await this.userService.findOneBy({ id });
+      if (isEmpty(user))
+        throw new NotFoundException(
+          i18n.t('error.NOT_FOUND', {
+            args: { property: 'USER' },
+          }),
+        );
+      await this.userService.softDelete(id);
+      return true;
     } catch (error) {
       handleError(error);
     }

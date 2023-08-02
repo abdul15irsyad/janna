@@ -29,14 +29,19 @@ export class UserController {
   constructor(@Inject(UserService) private userService: UserService) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @I18n() i18n: I18nContext<I18nTranslations>,
+  ) {
     try {
       const newUser = await this.userService.create({
         ...createUserDto,
         password: hashPassword(createUserDto.password),
       });
       return {
-        message: 'create user successfull',
+        message: i18n.t('common.CREATE_SUCCESSFULL', {
+          args: { property: 'USER' },
+        }),
         data: newUser,
       };
     } catch (error) {
@@ -45,12 +50,17 @@ export class UserController {
   }
 
   @Get()
-  async findAll(@Query() findAllUserDto?: FindAllUserDto) {
+  async findAll(
+    @I18n() i18n: I18nContext<I18nTranslations>,
+    @Query() findAllUserDto?: FindAllUserDto,
+  ) {
     try {
       const { data, totalAllData, totalPage } =
         await this.userService.findWithPagination(findAllUserDto);
       return {
-        message: 'read all users',
+        message: i18n.t('common.READ_ALL', {
+          args: { property: 'USER' },
+        }),
         meta: {
           currentPage: data.length > 0 ? findAllUserDto?.page ?? 1 : null,
           totalPage,
@@ -78,7 +88,9 @@ export class UserController {
           }),
         );
       return {
-        message: 'read user',
+        message: i18n.t('common.READ', {
+          args: { property: 'USER' },
+        }),
         data: user,
       };
     } catch (error) {
@@ -107,7 +119,9 @@ export class UserController {
           : undefined,
       });
       return {
-        message: 'update user successfull',
+        message: i18n.t('common.UPDATE_SUCCESSFULL', {
+          args: { property: 'USER' },
+        }),
         data: updatedUser,
       };
     } catch (error) {
@@ -130,7 +144,9 @@ export class UserController {
         );
       await this.userService.softDelete(id);
       return {
-        message: 'delete user successfull',
+        message: i18n.t('common.DELETE_SUCCESSFULL', {
+          args: { property: 'USER' },
+        }),
       };
     } catch (error) {
       handleError(error);
