@@ -10,6 +10,7 @@ import {
   Query,
   NotFoundException,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,7 +21,9 @@ import { I18nTranslations } from '../i18n/i18n.generated';
 import { FindAllUserDto } from './dto/find-all-user.dto';
 import { isEmpty } from 'class-validator';
 import { hashPassword } from '../shared/utils/password.util';
+import { JwtAuthGuard } from '../auth/guards/auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UserController {
   constructor(@Inject(UserService) private userService: UserService) {}

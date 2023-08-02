@@ -1,12 +1,12 @@
 import { Inject, UnauthorizedException } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from '../services/auth.service';
-import { LoginObject } from '../objects/login.objects';
+import { LoginObject } from '../object-types/login.object-type';
 import { LoginDto } from '../dto/login.dto';
 import { handleError } from '../../shared/utils/error.util';
 import { isEmpty } from 'class-validator';
 import { Request } from 'express';
-import { RefreshTokenObject } from '../objects/refresh-token.object';
+import { RefreshTokenObject } from '../object-types/refresh-token.object-type';
 import { User } from '../../user/entities/user.entity';
 import { RegisterDto } from '../dto/register.dto';
 

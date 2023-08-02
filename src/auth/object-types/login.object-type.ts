@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { GrantType } from '../enum/grant-type.enum';
 
 @ObjectType({ isAbstract: true })
 export abstract class TokenObject {
@@ -12,7 +13,7 @@ export abstract class TokenObject {
 @ObjectType()
 export class AccessToken extends TokenObject {
   @Field(() => String)
-  grantType: 'password' | 'refresh-token';
+  grantType: GrantType;
 }
 
 @ObjectType()

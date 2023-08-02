@@ -1,6 +1,11 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './entities/user.entity';
-import { Inject, NotFoundException, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Inject,
+  NotFoundException,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { FindAllUserDto } from './dto/find-all-user.dto';
 import { handleError } from '../shared/utils/error.util';
@@ -10,7 +15,9 @@ import { I18nTranslations } from '../i18n/i18n.generated';
 import { isEmpty } from 'class-validator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { hashPassword } from '../shared/utils/password.util';
+import { JwtAuthGuard } from '../auth/guards/auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
   constructor(@Inject(UserService) private userService: UserService) {}
