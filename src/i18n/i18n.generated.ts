@@ -12,6 +12,7 @@ export type I18nTranslations = {
         "TOKEN_EXPIRED": string;
         "THE_TOKEN_IS_NOT_REFRESH_TOKEN": string;
         "EMAIL_HAS_NOT_BEEN_VERIFIED": string;
+        "OLD_PASSWORD_IS_INCORRECT": string;
     };
     "label": {
         "ID": string;
@@ -21,6 +22,8 @@ export type I18nTranslations = {
         "USERNAME": string;
         "EMAIL": string;
         "PASSWORD": string;
+        "OLD_PASSWORD": string;
+        "NEW_PASSWORD": string;
         "CONFIRM_PASSWORD": string;
         "PAGE": string;
         "LIMIT": string;

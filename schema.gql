@@ -67,6 +67,8 @@ type Mutation {
   login(loginInput: LoginDto!): LoginObject!
   refreshToken: RefreshTokenObject!
   register(registerInput: RegisterDto!): User!
+  updateAuthUser(updateAuthUserInput: UpdateAuthUserDto): User!
+  updateAuthUserPassword(updateAuthUserPasswordInput: UpdateAuthUserPasswordDto!): Boolean!
   updateRole(updateRoleInput: UpdateRoleDto!): Role!
 }
 
@@ -81,6 +83,7 @@ type PaginatedUser {
 }
 
 type Query {
+  authUser: User!
   error: String!
   role(id: String!): Role!
   roles(findAllRoleInput: FindAllRoleDto): PaginatedRole!
@@ -115,6 +118,18 @@ type Role {
   slug: String!
   updatedAt: DateTime!
   users(findAllUserInput: FindAllUserDto): PaginatedUser
+}
+
+input UpdateAuthUserDto {
+  email: String
+  name: String
+  username: String
+}
+
+input UpdateAuthUserPasswordDto {
+  confirmPassword: String!
+  newPassword: String!
+  oldPassword: String!
 }
 
 input UpdateRoleDto {

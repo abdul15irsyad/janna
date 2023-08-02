@@ -42,19 +42,19 @@ export abstract class BaseService<T extends BaseEntity> {
   async findOneBy(
     where: FindOptionsWhere<T> | FindOptionsWhere<T>[],
   ): Promise<T> {
-    return this.repository.findOne({ where, relations: this.relations });
+    return this.findOne({ where, relations: this.relations });
   }
 
   async update(id: any, entity: DeepPartial<T>): Promise<T> {
     await this.repository.save({ id, ...entity });
-    return this.repository.findOneBy({ id });
+    return this.findOneBy({ id });
   }
 
   async delete(id: any): Promise<void> {
     await this.repository.delete(id);
   }
 
-  async softDelete(id: any): Promise<void> {
+  async softDelete(id: string | FindOptionsWhere<T>): Promise<void> {
     await this.repository.softDelete(id);
   }
 }

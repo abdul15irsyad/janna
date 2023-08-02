@@ -6,6 +6,8 @@
   "USERNAME": "username",
   "EMAIL": "email",
   "PASSWORD": "kata sandi",
+  "OLD_PASSWORD": "kata sandi lama",
+  "NEW_PASSWORD": "kata sandi baru",
   "CONFIRM_PASSWORD": "konfirmasi kata sandi",
   "PAGE": "page",
   "LIMIT": "limit",

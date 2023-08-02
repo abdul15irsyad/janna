@@ -6,6 +6,8 @@
   "USERNAME": "username",
   "EMAIL": "email",
   "PASSWORD": "password",
+  "OLD_PASSWORD": "old password",
+  "NEW_PASSWORD": "new password",
   "CONFIRM_PASSWORD": "confirm password",
   "PAGE": "page",
   "LIMIT": "limit",

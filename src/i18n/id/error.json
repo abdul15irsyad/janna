@@ -4,5 +4,6 @@
   "CANNOT_DELETE_HAVE_CHILDREN": "gagal menghapus $t(label.{property}), karna memiliki data $t(label.{children})",
   "TOKEN_EXPIRED": "token kadaluarsa",
   "THE_TOKEN_IS_NOT_REFRESH_TOKEN": "token bukan berupa \"refresh token\"",
-  "EMAIL_HAS_NOT_BEEN_VERIFIED": "email belum diverifikasi"
+  "EMAIL_HAS_NOT_BEEN_VERIFIED": "email belum diverifikasi",
+  "OLD_PASSWORD_IS_INCORRECT": "$t(label.OLD_PASSWORD) salah"
 }
