@@ -19,12 +19,14 @@ import { hashPassword } from '../shared/utils/password.util';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SUPER_ADMINISTRATOR } from '../role/role.config';
+import { PermissionGuard } from '../permission/guards/permission.guard';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => User)
 export class UserResolver {
   constructor(@Inject(UserService) private userService: UserService) {}
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'create', moduleSlug: 'user' }))
   @Mutation(() => User, { name: 'createUser' })
   async create(
     @Args('createUserInput', { type: () => CreateUserDto })
@@ -42,6 +44,7 @@ export class UserResolver {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'user' }))
   @Query(() => PaginatedUser, { name: 'users' })
   async findAll(
     @Args('findAllUserInput', { type: () => FindAllUserDto, nullable: true })
@@ -64,6 +67,7 @@ export class UserResolver {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'user' }))
   @Query(() => User, { name: 'user' })
   async findOne(
     @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
@@ -83,6 +87,7 @@ export class UserResolver {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'update', moduleSlug: 'user' }))
   @Mutation(() => User, { name: 'updateUser' })
   async update(
     @Args('updateUserInput') updateUserInput: UpdateUserDto,
@@ -114,6 +119,7 @@ export class UserResolver {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'delete', moduleSlug: 'user' }))
   @Mutation(() => Boolean, { name: 'deleteUser' })
   async remove(
     @Args('id', { type: () => String }, ParseUUIDPipe) id: string,

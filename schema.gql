@@ -8,6 +8,15 @@ type AccessToken {
   token: String!
 }
 
+type Action {
+  createdAt: DateTime!
+  deletedAt: DateTime!
+  id: String!
+  name: String!
+  slug: String!
+  updatedAt: DateTime!
+}
+
 input CreateRoleDto {
   name: String!
 }
@@ -25,6 +34,14 @@ input CreateUserDto {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input FindAllPermissionDto {
+  limit: Int
+  orderBy: String
+  orderDir: String
+  page: Int
+  search: String
+}
 
 input FindAllRoleDto {
   limit: Int
@@ -60,6 +77,16 @@ type Meta {
   totalPage: Int
 }
 
+type Module {
+  createdAt: DateTime!
+  deletedAt: DateTime!
+  desc: String
+  id: String!
+  name: String!
+  slug: String!
+  updatedAt: DateTime!
+}
+
 type Mutation {
   createRole(createRoleInput: CreateRoleDto!): Role!
   createUser(createUserInput: CreateUserDto!): User!
@@ -74,6 +101,11 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserDto!): User!
 }
 
+type PaginatedPermission {
+  data: [Permission!]!
+  meta: Meta
+}
+
 type PaginatedRole {
   data: [Role!]!
   meta: Meta
@@ -84,9 +116,20 @@ type PaginatedUser {
   meta: Meta
 }
 
+type Permission {
+  action: Action
+  createdAt: DateTime!
+  deletedAt: DateTime!
+  id: String!
+  module: Module
+  updatedAt: DateTime!
+}
+
 type Query {
   authUser: User!
   error: String!
+  permission(id: String!): Permission!
+  permissions(findAllPermissionInput: FindAllPermissionDto): PaginatedPermission!
   role(id: String!): Role!
   roles(findAllRoleInput: FindAllRoleDto): PaginatedRole!
   root: String!

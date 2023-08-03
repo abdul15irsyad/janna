@@ -31,6 +31,7 @@ import { FindAllUserDto } from '../user/dto/find-all-user.dto';
 import { PaginatedRole } from './object-types/paginated-role.object-type';
 import { PaginatedUser } from '../user/object-types/paginated-user.object-type';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
+import { PermissionGuard } from '../permission/guards/permission.guard';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Role)
@@ -41,6 +42,7 @@ export class RoleResolver {
     @Inject(RedisService) private redisService: RedisService,
   ) {}
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'create', moduleSlug: 'role' }))
   @Mutation(() => Role, { name: 'createRole' })
   async create(
     @Args('createRoleInput', { type: () => CreateRoleDto })
@@ -60,6 +62,7 @@ export class RoleResolver {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'role' }))
   @Query(() => PaginatedRole, { name: 'roles' })
   async findAll(
     @Args('findAllRoleInput', { type: () => FindAllRoleDto, nullable: true })
@@ -84,6 +87,7 @@ export class RoleResolver {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'role' }))
   @Query(() => Role, { name: 'role' })
   async findOne(
     @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
@@ -105,6 +109,7 @@ export class RoleResolver {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'update', moduleSlug: 'role' }))
   @Mutation(() => Role, { name: 'updateRole' })
   async update(
     @Args('updateRoleInput', { type: () => UpdateRoleDto })
@@ -135,6 +140,7 @@ export class RoleResolver {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'delete', moduleSlug: 'role' }))
   @Mutation(() => Boolean, { name: 'deleteRole' })
   async remove(
     @Args('id', { type: () => String }, ParseUUIDPipe) id: string,

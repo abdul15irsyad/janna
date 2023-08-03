@@ -17,9 +17,9 @@ export class RoleService extends BaseService<Role> {
 
   constructor(
     @InjectRepository(Role)
-    private RoleRepo: Repository<Role>,
+    private roleRepo: Repository<Role>,
   ) {
-    super(RoleRepo);
+    super(roleRepo);
   }
 
   async findWithPagination({
@@ -35,8 +35,8 @@ export class RoleService extends BaseService<Role> {
     const filter: FindOptionsWhere<Role> = {};
     const findOptionsWhere: FindOptionsWhere<Role> | FindOptionsWhere<Role>[] =
       search ? [{ name: ILike(`%${search}%`), ...filter }] : filter;
-    const totalAllData = await this.RoleRepo.countBy(findOptionsWhere);
-    const data = await this.RoleRepo.find({
+    const totalAllData = await this.roleRepo.countBy(findOptionsWhere);
+    const data = await this.roleRepo.find({
       where: findOptionsWhere,
       take: limit,
       skip: limit ? (page - 1) * limit : undefined,

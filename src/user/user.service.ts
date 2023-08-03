@@ -19,9 +19,9 @@ export class UserService extends BaseService<User> {
 
   constructor(
     @InjectRepository(User)
-    private UserRepo: Repository<User>,
+    private userRepo: Repository<User>,
   ) {
-    super(UserRepo);
+    super(userRepo);
   }
 
   async findWithPagination({
@@ -46,8 +46,8 @@ export class UserService extends BaseService<User> {
             { email: ILike(`%${search}%`), ...filter },
           ]
         : filter;
-    const totalAllData = await this.UserRepo.countBy(findOptionsWhere);
-    const data = await this.UserRepo.find({
+    const totalAllData = await this.userRepo.countBy(findOptionsWhere);
+    const data = await this.userRepo.find({
       where: findOptionsWhere,
       take: limit,
       skip: limit ? (page - 1) * limit : undefined,

@@ -6,7 +6,6 @@ import dayjs from 'dayjs';
 import { SeederEntity } from '../entities/seeder.entity';
 import { User } from '../../user/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
-import { random } from '../../shared/utils/array.util';
 import { hashPassword } from '../../shared/utils/password.util';
 import { Role } from '../../role/entities/role.entity';
 
@@ -27,12 +26,20 @@ export default class UsersSeeder extends Seeder {
       id: '02eee6ce-a2a2-4b5e-bb55-cfc51dfd9516',
       name: 'Super Administrator',
       username: 'superadministrator',
-      email: 'info@bukapeta.com',
+      email: 'abdul15irsyad@gmail.com',
       emailVerifiedAt: dayjs().toDate(),
       password: 'x0TcLtjV22xXtDI',
       role: roles.find((role) => role.slug === 'super-administrator'),
     });
     if (NODE_ENV !== 'production') {
+      users.push({
+        id: '4bb84107-c197-43a0-9545-de815fc438a1',
+        name: 'Teguh Irawan',
+        username: 'teguh',
+        email: 'teguh@email.com',
+        password: 'Qwerty123',
+        role: roles.find((role) => role.slug === 'user'),
+      });
       for (let i = users.length; i < 20; i++) {
         const fullName = faker.name.fullName();
         users.push({
@@ -41,7 +48,7 @@ export default class UsersSeeder extends Seeder {
           email: faker.internet
             .email(fullName.split(' ')[0], fullName.split(' ')[1])
             .toLowerCase(),
-          emailVerifiedAt: random([null, dayjs().toDate()]),
+          emailVerifiedAt: null,
           role: roles.find((role) => role.slug === 'user'),
         });
       }

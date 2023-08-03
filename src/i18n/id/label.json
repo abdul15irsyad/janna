@@ -14,5 +14,6 @@
   "SEARCH": "search",
   "ORDER_BY": "orderBy",
   "ORDER_DIR": "orderDir",
-  "ROLE_ID": "id role"
+  "ROLE_ID": "id role",
+  "PERMISSION": "hak akses"
 }

@@ -28,6 +28,7 @@ import { useCache } from '../shared/utils/cache.util';
 import { RedisService } from '../redis/redis.service';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { SUPER_ADMINISTRATOR } from './role.config';
+import { PermissionGuard } from '../permission/guards/permission.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('roles')
@@ -38,6 +39,7 @@ export class RoleController {
     @Inject(RedisService) private redisService: RedisService,
   ) {}
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'create', moduleSlug: 'role' }))
   @Post()
   async create(
     @Body() createRoleDto: CreateRoleDto,
@@ -62,6 +64,7 @@ export class RoleController {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'role' }))
   @Get()
   async findAll(
     @I18n() i18n: I18nContext<I18nTranslations>,
@@ -89,6 +92,7 @@ export class RoleController {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'role' }))
   @Get(':id')
   async findOne(
     @Param('id', ParseUUIDPipe) id: string,
@@ -115,6 +119,7 @@ export class RoleController {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'role' }))
   @Get(':id/users')
   async findRoleUsers(
     @Param('id', ParseUUIDPipe) id: string,
@@ -153,6 +158,7 @@ export class RoleController {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'update', moduleSlug: 'role' }))
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -193,6 +199,7 @@ export class RoleController {
     }
   }
 
+  @UseGuards(new PermissionGuard({ actionSlug: 'delete', moduleSlug: 'role' }))
   @Delete(':id')
   async remove(
     @Param('id', ParseUUIDPipe) id: string,

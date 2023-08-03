@@ -47,6 +47,7 @@ export type I18nTranslations = {
         "ORDER_BY": string;
         "ORDER_DIR": string;
         "ROLE_ID": string;
+        "PERMISSION": string;
     };
     "validation": {
         "IS_NOT_EMPTY": string;

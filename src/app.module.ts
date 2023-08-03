@@ -25,6 +25,7 @@ import { TokenModule } from './token/token.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { GraphQLFormattedError } from 'graphql';
+import { PermissionModule } from './permission/permission.module';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ import { GraphQLFormattedError } from 'graphql';
     RoleModule,
     AuthModule,
     TokenModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],
