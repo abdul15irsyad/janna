@@ -7,24 +7,13 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { Role } from './entities/role.entity';
-import {
-  BadRequestException,
-  Inject,
-  NotFoundException,
-  ParseUUIDPipe,
-  UseGuards,
-} from '@nestjs/common';
+import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { handleError } from '../shared/utils/error.util';
 import { RedisService } from '../redis/redis.service';
 import { CreateRoleDto } from './dto/create-role.dto';
-import slugify from 'slugify';
 import { FindAllRoleDto } from './dto/find-all-role.dto';
-import { useCache } from '../shared/utils/cache.util';
-import { cleanNull } from '../shared/utils/object.util';
-import { I18n, I18nContext } from 'nestjs-i18n';
-import { I18nTranslations } from '../i18n/i18n.generated';
-import { isEmpty, isNotEmpty } from 'class-validator';
+import { isNotEmpty } from 'class-validator';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { UserService } from '../user/user.service';
 import { FindAllUserDto } from '../user/dto/find-all-user.dto';
@@ -49,13 +38,7 @@ export class RoleResolver {
     createRoleDto: CreateRoleDto,
   ) {
     try {
-      const newRole = await this.roleService.create({
-        ...createRoleDto,
-        slug: slugify(createRoleDto.name, { lower: true, strict: true }),
-      });
-      // delete cache
-      const cacheKeys = await this.redisService.keys(`roles:*`);
-      await this.redisService.del(cacheKeys);
+      const newRole = await this.roleService.create(createRoleDto);
       return newRole;
     } catch (error) {
       handleError(error);
@@ -69,9 +52,8 @@ export class RoleResolver {
     findAllRoleDto?: FindAllRoleDto,
   ) {
     try {
-      const { data, totalAllData, totalPage } = await useCache(
-        `roles:${JSON.stringify(cleanNull(findAllRoleDto))}`,
-        () => this.roleService.findWithPagination(findAllRoleDto),
+      const { data, totalAllData, totalPage } = await this.roleService.findAll(
+        findAllRoleDto,
       );
       return {
         meta: {
@@ -89,20 +71,9 @@ export class RoleResolver {
 
   @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'role' }))
   @Query(() => Role, { name: 'role' })
-  async findOne(
-    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
-    @I18n() i18n: I18nContext<I18nTranslations>,
-  ) {
+  async findOne(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const role = await useCache(`role:${id}`, () =>
-        this.roleService.findOneBy({ id }),
-      );
-      if (isEmpty(role))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'ROLE' },
-          }),
-        );
+      const role = await this.roleService.findOneBy(id);
       return role;
     } catch (error) {
       handleError(error);
@@ -114,26 +85,12 @@ export class RoleResolver {
   async update(
     @Args('updateRoleInput', { type: () => UpdateRoleDto })
     updateRoleDto: UpdateRoleDto,
-    @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const { id } = updateRoleDto;
-      const role = await useCache(`role:${id}`, () =>
-        this.roleService.findOneBy({ id }),
+      const updatedRole = await this.roleService.update(
+        updateRoleDto.id,
+        updateRoleDto,
       );
-      if (isEmpty(role))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'ROLE' },
-          }),
-        );
-      const updatedRole = await this.roleService.update(id, {
-        ...updateRoleDto,
-        slug: slugify(updateRoleDto.name, { lower: true, strict: true }),
-      });
-      // delete cache
-      const cacheKeys = await this.redisService.keys(`roles:*`);
-      await this.redisService.del([...cacheKeys, `role:${id}`]);
       return updatedRole;
     } catch (error) {
       handleError(error);
@@ -142,29 +99,9 @@ export class RoleResolver {
 
   @UseGuards(new PermissionGuard({ actionSlug: 'delete', moduleSlug: 'role' }))
   @Mutation(() => Boolean, { name: 'deleteRole' })
-  async remove(
-    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
-    @I18n() i18n: I18nContext<I18nTranslations>,
-  ) {
+  async remove(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const role = await this.roleService.findOneBy({ id });
-      if (isEmpty(role))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'ROLE' },
-          }),
-        );
-      const usersCount = await this.userService.countBy({ roleId: id });
-      if (usersCount > 0)
-        throw new BadRequestException(
-          i18n.t('error.CANNOT_DELETE_HAVE_CHILDREN', {
-            args: { property: 'ROLE', children: 'USER' },
-          }),
-        );
-      await this.roleService.softDelete(id);
-      // delete cache
-      const cacheKeys = await this.redisService.keys(`roles:*`);
-      await this.redisService.del([...cacheKeys, `role:${id}`]);
+      await this.roleService.remove(id);
       return true;
     } catch (error) {
       handleError(error);
@@ -180,10 +117,7 @@ export class RoleResolver {
     try {
       if (isNotEmpty(role.users)) return role.users;
       const { totalPage, totalAllData, data } =
-        await this.userService.findWithPagination({
-          ...findAllUserDto,
-          roleId: role.id,
-        });
+        await this.roleService.findRoleUsers(role.id, findAllUserDto);
       return {
         meta: {
           currentPage: data.length > 0 ? findAllUserDto?.page ?? 1 : null,

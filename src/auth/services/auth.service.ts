@@ -15,16 +15,18 @@ import { JWTType } from '../enum/jwt-type.enum';
 import { ACCESS_TOKEN_EXPIRED, REFRESH_TOKEN_EXPIRED } from '../auth.config';
 import { GrantType } from '../enum/grant-type.enum';
 import { IncomingHttpHeaders } from 'http';
-import { RoleService } from '../../role/role.service';
 import { RedisService } from '../../redis/redis.service';
 import { TokenExpiredError } from 'jsonwebtoken';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Role } from '../../role/entities/role.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(JwtService) private jwtService: JwtService,
     @Inject(UserService) private userService: UserService,
-    @Inject(RoleService) private roleService: RoleService,
+    @InjectRepository(Role) private roleRepo: Repository<Role>,
     @Inject(RedisService) private redisService: RedisService,
     @Inject(I18nService) private i18n: I18nService<I18nTranslations>,
   ) {}
@@ -144,7 +146,7 @@ export class AuthService {
     username: string;
     password: string;
   }) {
-    const roleUser = await this.roleService.findOneBy({ slug: 'user' });
+    const roleUser = await this.roleRepo.findOneBy({ slug: 'user' });
     const newUser = await this.userService.create({
       name,
       username,

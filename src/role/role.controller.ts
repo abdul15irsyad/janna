@@ -7,27 +7,21 @@ import {
   Param,
   Delete,
   Inject,
-  NotFoundException,
   ParseUUIDPipe,
   Query,
-  BadRequestException,
   UseGuards,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import slugify from 'slugify';
 import { handleError } from '../shared/utils/error.util';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { I18nTranslations } from '../i18n/i18n.generated';
-import { isEmpty } from 'class-validator';
 import { FindAllRoleDto } from './dto/find-all-role.dto';
 import { UserService } from '../user/user.service';
 import { FindAllUserDto } from '../user/dto/find-all-user.dto';
-import { useCache } from '../shared/utils/cache.util';
 import { RedisService } from '../redis/redis.service';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
-import { SUPER_ADMINISTRATOR } from './role.config';
 import { PermissionGuard } from '../permission/guards/permission.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -46,13 +40,7 @@ export class RoleController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const newRole = await this.roleService.create({
-        ...createRoleDto,
-        slug: slugify(createRoleDto.name, { lower: true, strict: true }),
-      });
-      // delete cache
-      const cacheKeys = await this.redisService.keys(`roles:*`);
-      await this.redisService.del(cacheKeys);
+      const newRole = await this.roleService.create(createRoleDto);
       return {
         message: i18n.t('common.CREATE_SUCCESSFULL', {
           args: { property: 'ROLE' },
@@ -71,9 +59,8 @@ export class RoleController {
     @Query() findAllRoleDto?: FindAllRoleDto,
   ) {
     try {
-      const { data, totalAllData, totalPage } = await useCache(
-        `roles:${JSON.stringify(findAllRoleDto)}`,
-        () => this.roleService.findWithPagination(findAllRoleDto),
+      const { data, totalAllData, totalPage } = await this.roleService.findAll(
+        findAllRoleDto,
       );
       return {
         message: i18n.t('common.READ_ALL', {
@@ -99,15 +86,7 @@ export class RoleController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const role = await useCache(`role:${id}`, () =>
-        this.roleService.findOneBy({ id }),
-      );
-      if (isEmpty(role))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'ROLE' },
-          }),
-        );
+      const role = await this.roleService.findOneBy(id);
       return {
         message: i18n.t('common.READ', {
           args: { property: 'ROLE' },
@@ -127,20 +106,8 @@ export class RoleController {
     @Query() findAllUserDto?: FindAllUserDto,
   ) {
     try {
-      const role = await useCache(`role:${id}`, () =>
-        this.roleService.findOneBy({ id }),
-      );
-      if (isEmpty(role))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'ROLE' },
-          }),
-        );
-      const { totalPage, totalAllData, data } =
-        await this.userService.findWithPagination({
-          ...findAllUserDto,
-          roleId: id,
-        });
+      const { data, totalPage, totalAllData } =
+        await this.roleService.findRoleUsers(id, findAllUserDto);
       return {
         message: i18n.t('common.READ_ROLE_USERS', {
           args: { property: 'ROLE' },
@@ -166,28 +133,7 @@ export class RoleController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const role = await useCache(`role:${id}`, () =>
-        this.roleService.findOneBy({ id }),
-      );
-      if (isEmpty(role))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'ROLE' },
-          }),
-        );
-      if (role.slug === SUPER_ADMINISTRATOR)
-        throw new BadRequestException(
-          i18n.t('error.CANNOT_UPDATE_ROLE_SUPER_ADMINISTRATOR', {
-            args: {},
-          }),
-        );
-      const updatedRole = await this.roleService.update(id, {
-        ...updateRoleDto,
-        slug: slugify(updateRoleDto.name, { lower: true, strict: true }),
-      });
-      // delete cache
-      const cacheKeys = await this.redisService.keys(`roles:*`);
-      await this.redisService.del([...cacheKeys, `role:${id}`]);
+      const updatedRole = await this.roleService.update(id, updateRoleDto);
       return {
         message: i18n.t('common.UPDATE_SUCCESSFULL', {
           args: { property: 'ROLE' },
@@ -206,30 +152,7 @@ export class RoleController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const role = await this.roleService.findOneBy({ id });
-      if (isEmpty(role))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'ROLE' },
-          }),
-        );
-      if (role.slug === SUPER_ADMINISTRATOR)
-        throw new BadRequestException(
-          i18n.t('error.CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR', {
-            args: {},
-          }),
-        );
-      const usersCount = await this.userService.countBy({ roleId: id });
-      if (usersCount > 0)
-        throw new BadRequestException(
-          i18n.t('error.CANNOT_DELETE_HAVE_CHILDREN', {
-            args: { property: 'ROLE', children: 'USER' },
-          }),
-        );
-      await this.roleService.softDelete(id);
-      // delete cache
-      const cacheKeys = await this.redisService.keys(`roles:*`);
-      await this.redisService.del([...cacheKeys, `role:${id}`]);
+      await this.roleService.remove(id);
       return {
         message: i18n.t('common.DELETE_SUCCESSFULL', {
           args: { property: 'ROLE' },
