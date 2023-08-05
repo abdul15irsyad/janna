@@ -26,7 +26,7 @@ export default class UsersSeeder extends Seeder {
       id: '02eee6ce-a2a2-4b5e-bb55-cfc51dfd9516',
       name: 'Super Administrator',
       username: 'superadministrator',
-      email: 'abdul15irsyad@gmail.com',
+      email: 'abdulirsyad15@gmail.com',
       emailVerifiedAt: dayjs().toDate(),
       password: 'x0TcLtjV22xXtDI',
       role: roles.find((role) => role.slug === 'super-administrator'),
