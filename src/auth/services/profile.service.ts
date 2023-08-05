@@ -1,24 +1,26 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   ValidationError,
 } from '@nestjs/common';
-import { UserService } from '../../user/user.service';
 import { RedisService } from '../../redis/redis.service';
 import { isNotEmpty } from 'class-validator';
-import { Not } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../i18n/i18n.generated';
 import { compareSync } from 'bcrypt';
 import { hashPassword } from '../../shared/utils/password.util';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../../user/entities/user.entity';
+import { UserService } from '../../user/user.service';
 
 @Injectable()
 export class ProfileService {
   constructor(
-    @Inject(UserService) private userService: UserService,
-    @Inject(RedisService) private redisService: RedisService,
-    @Inject(I18nService) private i18n: I18nService<I18nTranslations>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private userService: UserService,
+    private redisService: RedisService,
+    private i18n: I18nService<I18nTranslations>,
   ) {}
 
   async update({
@@ -34,7 +36,7 @@ export class ProfileService {
   }) {
     const errors: ValidationError[] = [];
     const checkUsername = isNotEmpty(username)
-      ? await this.userService.findOneBy([{ id: Not(id), username }])
+      ? await this.userRepo.findOneBy({ id: Not(id), username })
       : null;
     if (isNotEmpty(checkUsername)) {
       errors.push({
@@ -49,7 +51,7 @@ export class ProfileService {
       });
     }
     const checkEmail = isNotEmpty(email)
-      ? await this.userService.findOneBy([{ id: Not(id), email }])
+      ? await this.userRepo.findOneBy({ id: Not(id), email })
       : null;
     if (isNotEmpty(checkEmail)) {
       errors.push({
@@ -64,11 +66,12 @@ export class ProfileService {
       });
     }
     if (errors.length > 0) throw new BadRequestException(errors);
-    const updatedUser = await this.userService.update(id, {
+    await this.userRepo.update(id, {
       name,
       username,
       email,
     });
+    const updatedUser = await this.userService.findOne(id);
 
     // delete user cache
     const cacheKey = await this.redisService.keys('users:*');
@@ -86,7 +89,7 @@ export class ProfileService {
     oldPassword: string;
     newPassword: string;
   }) {
-    const userWithPassword = await this.userService.findOne({
+    const userWithPassword = await this.userRepo.findOne({
       where: { id },
       select: { id: true, password: true },
     });
@@ -100,9 +103,10 @@ export class ProfileService {
       );
 
     // update user password
-    const updatedUser = await this.userService.update(id, {
+    await this.userRepo.update(id, {
       password: hashPassword(newPassword),
     });
+    const updatedUser = await this.userService.findOne(id);
 
     return updatedUser;
   }

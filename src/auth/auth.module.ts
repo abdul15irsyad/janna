@@ -14,10 +14,11 @@ import { ProfileResolver } from './resolvers/profile.resolver';
 import { ProfileController } from './controllers/profile.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Role } from '../role/entities/role.entity';
+import { User } from '../user/entities/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Role]),
+    TypeOrmModule.forFeature([Role, User]),
     JwtModule.register({
       secret: JWT_SECRET,
     }),

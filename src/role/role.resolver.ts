@@ -10,12 +10,10 @@ import { Role } from './entities/role.entity';
 import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { handleError } from '../shared/utils/error.util';
-import { RedisService } from '../redis/redis.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { FindAllRoleDto } from './dto/find-all-role.dto';
 import { isNotEmpty } from 'class-validator';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { UserService } from '../user/user.service';
 import { FindAllUserDto } from '../user/dto/find-all-user.dto';
 import { PaginatedRole } from './object-types/paginated-role.object-type';
 import { PaginatedUser } from '../user/object-types/paginated-user.object-type';
@@ -25,11 +23,7 @@ import { PermissionGuard } from '../permission/guards/permission.guard';
 @UseGuards(JwtAuthGuard)
 @Resolver(() => Role)
 export class RoleResolver {
-  constructor(
-    @Inject(RoleService) private roleService: RoleService,
-    @Inject(UserService) private userService: UserService,
-    @Inject(RedisService) private redisService: RedisService,
-  ) {}
+  constructor(@Inject(RoleService) private roleService: RoleService) {}
 
   @UseGuards(new PermissionGuard({ actionSlug: 'create', moduleSlug: 'role' }))
   @Mutation(() => Role, { name: 'createRole' })
@@ -73,7 +67,7 @@ export class RoleResolver {
   @Query(() => Role, { name: 'role' })
   async findOne(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const role = await this.roleService.findOneBy(id);
+      const role = await this.roleService.findOne(id);
       return role;
     } catch (error) {
       handleError(error);

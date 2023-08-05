@@ -30,7 +30,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     }),
   })
   @IsOptional()
-  username: string;
+  username?: string;
 
   @Field(() => String, { nullable: true })
   @IsNotExists(
@@ -55,5 +55,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     }),
   })
   @IsOptional()
-  email: string;
+  email?: string;
 }

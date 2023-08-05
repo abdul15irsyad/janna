@@ -8,7 +8,6 @@ import {
   Delete,
   Inject,
   Query,
-  NotFoundException,
   ParseUUIDPipe,
   UseGuards,
 } from '@nestjs/common';
@@ -19,8 +18,6 @@ import { handleError } from '../shared/utils/error.util';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { I18nTranslations } from '../i18n/i18n.generated';
 import { FindAllUserDto } from './dto/find-all-user.dto';
-import { isEmpty } from 'class-validator';
-import { hashPassword } from '../shared/utils/password.util';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { PermissionGuard } from '../permission/guards/permission.guard';
 
@@ -36,10 +33,7 @@ export class UserController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const newUser = await this.userService.create({
-        ...createUserDto,
-        password: hashPassword(createUserDto.password),
-      });
+      const newUser = await this.userService.create(createUserDto);
       return {
         message: i18n.t('common.CREATE_SUCCESSFULL', {
           args: { property: 'USER' },
@@ -58,8 +52,9 @@ export class UserController {
     @Query() findAllUserDto?: FindAllUserDto,
   ) {
     try {
-      const { data, totalAllData, totalPage } =
-        await this.userService.findWithPagination(findAllUserDto);
+      const { data, totalAllData, totalPage } = await this.userService.findAll(
+        findAllUserDto,
+      );
       return {
         message: i18n.t('common.READ_ALL', {
           args: { property: 'USER' },
@@ -84,13 +79,7 @@ export class UserController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const user = await this.userService.findOneBy({ id });
-      if (isEmpty(user))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'USER' },
-          }),
-        );
+      const user = await this.userService.findOne(id);
       return {
         message: i18n.t('common.READ', {
           args: { property: 'USER' },
@@ -110,19 +99,7 @@ export class UserController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const user = await this.userService.findOneBy({ id });
-      if (isEmpty(user))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'USER' },
-          }),
-        );
-      const updatedUser = await this.userService.update(id, {
-        ...updateUserDto,
-        password: updateUserDto.password
-          ? hashPassword(updateUserDto.password)
-          : undefined,
-      });
+      const updatedUser = await this.userService.update(id, updateUserDto);
       return {
         message: i18n.t('common.UPDATE_SUCCESSFULL', {
           args: { property: 'USER' },
@@ -141,14 +118,7 @@ export class UserController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const user = await this.userService.findOneBy({ id });
-      if (isEmpty(user))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'USER' },
-          }),
-        );
-      await this.userService.softDelete(id);
+      await this.userService.remove(id);
       return {
         message: i18n.t('common.DELETE_SUCCESSFULL', {
           args: { property: 'USER' },

@@ -27,6 +27,7 @@ import { FindAllUserDto } from '../user/dto/find-all-user.dto';
 import { UserService } from '../user/user.service';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { SUPER_ADMINISTRATOR } from './role.config';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class RoleService {
@@ -34,6 +35,7 @@ export class RoleService {
 
   constructor(
     @InjectRepository(Role) private roleRepo: Repository<Role>,
+    @InjectRepository(User) private userRepo: Repository<User>,
     private redisService: RedisService,
     private i18n: I18nService<I18nTranslations>,
     private userService: UserService,
@@ -96,7 +98,7 @@ export class RoleService {
     };
   }
 
-  async findOneBy(id: string) {
+  async findOne(id: string) {
     const role = await useCache(`role:${id}`, () =>
       this.roleRepo.findOne({ where: { id }, relations: this.relations }),
     );
@@ -111,34 +113,16 @@ export class RoleService {
   }
 
   async findRoleUsers(id: string, findAllUserDto: FindAllUserDto) {
-    const role = await useCache(`role:${id}`, () =>
-      this.roleRepo.findOne({ where: { id }, relations: this.relations }),
-    );
-    if (isEmpty(role))
-      throw new NotFoundException(
-        this.i18n.t('error.NOT_FOUND', {
-          args: { property: 'ROLE' },
-          lang: I18nContext.current().lang,
-        }),
-      );
+    const role = await this.findOne(id);
     const findRoleUsers = await this.userService.findWithPagination({
       ...findAllUserDto,
-      roleId: id,
+      roleId: role.id,
     });
     return findRoleUsers;
   }
 
-  async update(id: string, updateRoleDto: UpdateRoleDto) {
-    const role = await useCache(`role:${id}`, () =>
-      this.roleRepo.findOne({ where: { id }, relations: this.relations }),
-    );
-    if (isEmpty(role))
-      throw new NotFoundException(
-        this.i18n.t('error.NOT_FOUND', {
-          args: { property: 'ROLE' },
-          lang: I18nContext.current().lang,
-        }),
-      );
+  async update(id: string, { name }: UpdateRoleDto) {
+    const role = await this.findOne(id);
     if (role.slug === SUPER_ADMINISTRATOR)
       throw new BadRequestException(
         this.i18n.t('error.CANNOT_UPDATE_ROLE_SUPER_ADMINISTRATOR', {
@@ -146,29 +130,19 @@ export class RoleService {
           lang: I18nContext.current().lang,
         }),
       );
-    const updatedRole = await this.roleRepo.update(id, {
-      ...updateRoleDto,
-      slug: slugify(updateRoleDto.name, { lower: true, strict: true }),
+    await this.roleRepo.update(id, {
+      name,
+      slug: slugify(name, { lower: true, strict: true }),
     });
     // delete cache
     const cacheKeys = await this.redisService.keys(`roles:*`);
     await this.redisService.del([...cacheKeys, `role:${id}`]);
 
-    return updatedRole;
+    return await this.findOne(id);
   }
 
   async remove(id: string) {
-    const role = await this.roleRepo.findOne({
-      where: { id },
-      relations: this.relations,
-    });
-    if (isEmpty(role))
-      throw new NotFoundException(
-        this.i18n.t('error.NOT_FOUND', {
-          args: { property: 'ROLE' },
-          lang: I18nContext.current().lang,
-        }),
-      );
+    const role = await this.findOne(id);
     if (role.slug === SUPER_ADMINISTRATOR)
       throw new BadRequestException(
         this.i18n.t('error.CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR', {
@@ -176,7 +150,7 @@ export class RoleService {
           lang: I18nContext.current().lang,
         }),
       );
-    const usersCount = await this.userService.countBy({ roleId: id });
+    const usersCount = await this.userRepo.countBy({ roleId: id });
     if (usersCount > 0)
       throw new BadRequestException(
         this.i18n.t('error.CANNOT_DELETE_HAVE_CHILDREN', {

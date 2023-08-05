@@ -18,20 +18,14 @@ import { handleError } from '../shared/utils/error.util';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { I18nTranslations } from '../i18n/i18n.generated';
 import { FindAllRoleDto } from './dto/find-all-role.dto';
-import { UserService } from '../user/user.service';
 import { FindAllUserDto } from '../user/dto/find-all-user.dto';
-import { RedisService } from '../redis/redis.service';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { PermissionGuard } from '../permission/guards/permission.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('roles')
 export class RoleController {
-  constructor(
-    @Inject(RoleService) private roleService: RoleService,
-    @Inject(UserService) private userService: UserService,
-    @Inject(RedisService) private redisService: RedisService,
-  ) {}
+  constructor(@Inject(RoleService) private roleService: RoleService) {}
 
   @UseGuards(new PermissionGuard({ actionSlug: 'create', moduleSlug: 'role' }))
   @Post()
@@ -86,7 +80,7 @@ export class RoleController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const role = await this.roleService.findOneBy(id);
+      const role = await this.roleService.findOne(id);
       return {
         message: i18n.t('common.READ', {
           args: { property: 'ROLE' },

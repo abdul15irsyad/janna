@@ -36,7 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           .create(JSON.parse(cachedAuthUser));
         return parsedAuthUser;
       }
-      const user = await this.userService.findOneBy({ id });
+      const user = await this.userService.findOne(id);
       if (!user) throw new UnauthorizedException();
       else
         await this.redisService.setex(

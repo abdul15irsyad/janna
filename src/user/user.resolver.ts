@@ -1,24 +1,13 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './entities/user.entity';
-import {
-  BadRequestException,
-  Inject,
-  NotFoundException,
-  ParseUUIDPipe,
-  UseGuards,
-} from '@nestjs/common';
+import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { FindAllUserDto } from './dto/find-all-user.dto';
 import { handleError } from '../shared/utils/error.util';
 import { PaginatedUser } from './object-types/paginated-user.object-type';
-import { I18n, I18nContext } from 'nestjs-i18n';
-import { I18nTranslations } from '../i18n/i18n.generated';
-import { isEmpty } from 'class-validator';
 import { CreateUserDto } from './dto/create-user.dto';
-import { hashPassword } from '../shared/utils/password.util';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { SUPER_ADMINISTRATOR } from '../role/role.config';
 import { PermissionGuard } from '../permission/guards/permission.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -33,10 +22,7 @@ export class UserResolver {
     createUserDto: CreateUserDto,
   ) {
     try {
-      const newUser = await this.userService.create({
-        ...createUserDto,
-        password: hashPassword(createUserDto.password),
-      });
+      const newUser = await this.userService.create(createUserDto);
       return newUser;
     } catch (error) {
       console.error(error);
@@ -51,8 +37,9 @@ export class UserResolver {
     findAllUserDto?: FindAllUserDto,
   ) {
     try {
-      const { data, totalAllData, totalPage } =
-        await this.userService.findWithPagination(findAllUserDto);
+      const { data, totalAllData, totalPage } = await this.userService.findAll(
+        findAllUserDto,
+      );
       return {
         meta: {
           currentPage: data.length > 0 ? findAllUserDto?.page ?? 1 : null,
@@ -69,18 +56,9 @@ export class UserResolver {
 
   @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'user' }))
   @Query(() => User, { name: 'user' })
-  async findOne(
-    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
-    @I18n() i18n: I18nContext<I18nTranslations>,
-  ) {
+  async findOne(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const user = await this.userService.findOneBy({ id });
-      if (isEmpty(user))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'USER' },
-          }),
-        );
+      const user = await this.userService.findOne(id);
       return user;
     } catch (error) {
       handleError(error);
@@ -89,30 +67,12 @@ export class UserResolver {
 
   @UseGuards(new PermissionGuard({ actionSlug: 'update', moduleSlug: 'user' }))
   @Mutation(() => User, { name: 'updateUser' })
-  async update(
-    @Args('updateUserInput') updateUserInput: UpdateUserDto,
-    @I18n() i18n: I18nContext<I18nTranslations>,
-  ) {
+  async update(@Args('updateUserInput') updateUserInput: UpdateUserDto) {
     try {
-      const user = await this.userService.findOneBy({ id: updateUserInput.id });
-      if (isEmpty(user))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'USER' },
-          }),
-        );
-      if (user.role.slug === SUPER_ADMINISTRATOR)
-        throw new BadRequestException(
-          i18n.t('error.CANNOT_UPDATE_SUPER_ADMINISTRATOR_USER', {
-            args: {},
-          }),
-        );
-      const updatedUser = await this.userService.update(updateUserInput.id, {
-        ...updateUserInput,
-        password: updateUserInput.password
-          ? hashPassword(updateUserInput.password)
-          : undefined,
-      });
+      const updatedUser = await this.userService.update(
+        updateUserInput.id,
+        updateUserInput,
+      );
       return updatedUser;
     } catch (error) {
       handleError(error);
@@ -121,26 +81,9 @@ export class UserResolver {
 
   @UseGuards(new PermissionGuard({ actionSlug: 'delete', moduleSlug: 'user' }))
   @Mutation(() => Boolean, { name: 'deleteUser' })
-  async remove(
-    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
-    @I18n() i18n: I18nContext<I18nTranslations>,
-  ) {
+  async remove(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const user = await this.userService.findOneBy({ id });
-      if (isEmpty(user))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'USER' },
-          }),
-        );
-      if (user.role.slug === SUPER_ADMINISTRATOR)
-        throw new BadRequestException(
-          i18n.t('error.CANNOT_DELETE_SUPER_ADMINISTRATOR_USER', {
-            args: {},
-          }),
-        );
-      await this.userService.softDelete(id);
-      return true;
+      return await this.userService.remove(id);
     } catch (error) {
       handleError(error);
     }

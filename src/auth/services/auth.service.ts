@@ -1,9 +1,4 @@
-import {
-  HttpStatus,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../../user/user.service';
 import { I18nContext, I18nService } from 'nestjs-i18n';
@@ -20,15 +15,18 @@ import { TokenExpiredError } from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from '../../role/entities/role.entity';
 import { Repository } from 'typeorm';
+import { User } from '../../user/entities/user.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(JwtService) private jwtService: JwtService,
-    @Inject(UserService) private userService: UserService,
     @InjectRepository(Role) private roleRepo: Repository<Role>,
-    @Inject(RedisService) private redisService: RedisService,
-    @Inject(I18nService) private i18n: I18nService<I18nTranslations>,
+    @InjectRepository(User) private userRepo: Repository<User>,
+    private jwtService: JwtService,
+    private userService: UserService,
+    private redisService: RedisService,
+    private i18n: I18nService<I18nTranslations>,
   ) {}
 
   getBearerTokenFromHeaders(headers: IncomingHttpHeaders) {
@@ -39,7 +37,7 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const authUser = await this.userService.findOne({
+    const authUser = await this.userRepo.findOne({
       select: {
         id: true,
         password: true,
@@ -146,19 +144,21 @@ export class AuthService {
     username: string;
     password: string;
   }) {
-    const roleUser = await this.roleRepo.findOneBy({ slug: 'user' });
-    const newUser = await this.userService.create({
+    const userRole = await this.roleRepo.findOneBy({ slug: 'user' });
+    const newUser = this.userRepo.create({
+      id: uuidv4(),
       name,
       username,
       email,
       password: hashPassword(password),
-      roleId: roleUser.id,
+      role: userRole,
     });
+    await this.userRepo.save(newUser);
 
     // delete user cache
     const cacheKeys = await this.redisService.keys(`users:*`);
     await this.redisService.del(cacheKeys);
 
-    return newUser;
+    return await this.userService.findOne(newUser.id);
   }
 }
