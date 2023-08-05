@@ -9,5 +9,6 @@
   "CANNOT_UPDATE_ROLE_SUPER_ADMINISTRATOR": "cannot update role super administrator",
   "CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR": "cannot delete role super administrator",
   "CANNOT_UPDATE_SUPER_ADMINISTRATOR_USER": "cannot update super administrator user",
-  "CANNOT_DELETE_SUPER_ADMINISTRATOR_USER": "cannot delete super administrator user"
+  "CANNOT_DELETE_SUPER_ADMINISTRATOR_USER": "cannot delete super administrator user",
+  "TOO_MANY_REQUESTS": "too many requests"
 }

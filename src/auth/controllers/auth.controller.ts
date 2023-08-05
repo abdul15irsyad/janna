@@ -13,15 +13,15 @@ import {
 } from '@nestjs/common';
 import { handleError } from '../../shared/utils/error.util';
 import { RegisterDto } from '../dto/register.dto';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import { LoginDto } from '../dto/login.dto';
 import { Request } from 'express';
 import { AuthService } from '../services/auth.service';
 import { isEmpty } from 'class-validator';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { I18nTranslations } from '../../i18n/i18n.generated';
+import { CustomThrottlerGuard } from '../../shared/guards/throttle.guard';
 
-@UseGuards(ThrottlerGuard)
+@UseGuards(CustomThrottlerGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('auth')
 export class AuthController {

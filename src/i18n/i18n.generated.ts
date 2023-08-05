@@ -29,6 +29,7 @@ export type I18nTranslations = {
         "CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR": string;
         "CANNOT_UPDATE_SUPER_ADMINISTRATOR_USER": string;
         "CANNOT_DELETE_SUPER_ADMINISTRATOR_USER": string;
+        "TOO_MANY_REQUESTS": string;
     };
     "label": {
         "ID": string;

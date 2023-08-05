@@ -1,4 +1,4 @@
-import { Inject, UnauthorizedException } from '@nestjs/common';
+import { Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from '../services/auth.service';
 import { LoginObject } from '../object-types/login.object-type';
@@ -9,7 +9,9 @@ import { Request } from 'express';
 import { RefreshTokenObject } from '../object-types/refresh-token.object-type';
 import { User } from '../../user/entities/user.entity';
 import { RegisterDto } from '../dto/register.dto';
+import { CustomThrottlerGuard } from '../../shared/guards/throttle.guard';
 
+@UseGuards(CustomThrottlerGuard)
 @Resolver()
 export class AuthResolver {
   constructor(@Inject(AuthService) private authService: AuthService) {}
