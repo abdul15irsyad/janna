@@ -49,9 +49,12 @@ export class I18nValidationExceptionFilter implements ExceptionFilter {
           });
         break;
       case 'graphql':
-        const normalizedErrors = this.normalizeValidationErrors(errors);
         // return new exception here
-        return new BadRequestException(normalizedErrors);
+        return new BadRequestException({
+          statusCode: this.options.errorHttpStatusCode || exception.getStatus(),
+          message: exception.getResponse(),
+          errors: this.normalizeValidationErrors(errors),
+        });
     }
   }
 

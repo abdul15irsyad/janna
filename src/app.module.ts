@@ -24,7 +24,7 @@ import { AuthModule } from './auth/auth.module';
 import { TokenModule } from './token/token.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
-import { GraphQLFormattedError } from 'graphql';
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { PermissionModule } from './permission/permission.module';
 
 @Module({
@@ -73,14 +73,18 @@ import { PermissionModule } from './permission/permission.module';
       csrfPrevention: false,
       introspection: true,
       context: ({ req, res }) => ({ req, res }),
-      formatError: (error: GraphQLFormattedError) => ({
-        ...error,
-        extensions: {
-          ...error.extensions,
-          stacktrace: undefined,
-        },
-        locations: undefined,
-      }),
+      formatError: (formattedError: GraphQLFormattedError) => {
+        return (
+          (formattedError?.extensions?.originalError as GraphQLError) ?? {
+            ...formattedError,
+            extensions: {
+              ...formattedError.extensions,
+              stacktrace: undefined,
+            },
+            locations: undefined,
+          }
+        );
+      },
     }),
     NestjsFormDataModule.config({
       storage: MemoryStoredFile,
