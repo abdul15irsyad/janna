@@ -13,6 +13,8 @@ import { hashPassword } from '../../shared/utils/password.util';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../user/entities/user.entity';
 import { UserService } from '../../user/user.service';
+import { UpdateAuthUserDto } from '../dto/update-auth-user.dto';
+import { UpdateAuthUserPasswordDto } from '../dto/update-auth-user-password.dto';
 
 @Injectable()
 export class ProfileService {
@@ -23,17 +25,9 @@ export class ProfileService {
     private i18n: I18nService<I18nTranslations>,
   ) {}
 
-  async update({
-    id,
-    name,
-    username,
-    email,
-  }: {
-    id: string;
-    name?: string;
-    username?: string;
-    email?: string;
-  }) {
+  async update(authUser: User, updateAuthUserDto: UpdateAuthUserDto) {
+    const { id } = authUser;
+    const { name, username, email } = updateAuthUserDto;
     const errors: ValidationError[] = [];
     const checkUsername = isNotEmpty(username)
       ? await this.userRepo.findOneBy({ id: Not(id), username })
@@ -80,15 +74,12 @@ export class ProfileService {
     return updatedUser;
   }
 
-  async updatePassword({
-    id,
-    oldPassword,
-    newPassword,
-  }: {
-    id: string;
-    oldPassword: string;
-    newPassword: string;
-  }) {
+  async updatePassword(
+    authUser: User,
+    updateAuthUserPasswordDto: UpdateAuthUserPasswordDto,
+  ) {
+    const { id } = authUser;
+    const { oldPassword, newPassword } = updateAuthUserPasswordDto;
     const userWithPassword = await this.userRepo.findOne({
       where: { id },
       select: { id: true, password: true },

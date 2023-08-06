@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Patch,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Patch, UseGuards } from '@nestjs/common';
 import { ProfileService } from '../services/profile.service';
 import { AuthUser } from '../decorators/auth-user.decorator';
 import { User } from '../../user/entities/user.entity';
@@ -19,7 +12,7 @@ import { I18nTranslations } from '../../i18n/i18n.generated';
 @UseGuards(JwtAuthGuard)
 @Controller('auth/user')
 export class ProfileController {
-  constructor(@Inject(ProfileService) private profileService: ProfileService) {}
+  constructor(private profileService: ProfileService) {}
 
   @Get()
   async authUser(
@@ -43,14 +36,10 @@ export class ProfileController {
     @Body() updateAuthUserDto?: UpdateAuthUserDto,
   ) {
     try {
-      const { name, username, email } = updateAuthUserDto;
-
-      const updatedUser = await this.profileService.update({
-        id: authUser.id,
-        name,
-        username,
-        email,
-      });
+      const updatedUser = await this.profileService.update(
+        authUser,
+        updateAuthUserDto,
+      );
 
       return {
         message: i18n.t('common.UPDATE_AUTH_USER_SUCCESSFULL', { args: {} }),
@@ -68,12 +57,10 @@ export class ProfileController {
     @Body() updateAuthUserPasswordInput?: UpdateAuthUserPasswordDto,
   ) {
     try {
-      const { oldPassword, newPassword } = updateAuthUserPasswordInput;
-      await this.profileService.updatePassword({
-        id: authUser.id,
-        oldPassword,
-        newPassword,
-      });
+      await this.profileService.updatePassword(
+        authUser,
+        updateAuthUserPasswordInput,
+      );
       return {
         message: i18n.t('common.UPDATE_AUTH_USER_PASSWORD_SUCCESSFULL', {
           args: {},

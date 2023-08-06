@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Inject, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { User } from '../../user/entities/user.entity';
 import { handleError } from '../../shared/utils/error.util';
 import { AuthUser } from '../decorators/auth-user.decorator';
@@ -11,7 +11,7 @@ import { UpdateAuthUserPasswordDto } from '../dto/update-auth-user-password.dto'
 @UseGuards(JwtAuthGuard)
 @Resolver()
 export class ProfileResolver {
-  constructor(@Inject(ProfileService) private profileService: ProfileService) {}
+  constructor(private profileService: ProfileService) {}
 
   @Query(() => User)
   async authUser(@AuthUser() authUser: User) {
@@ -32,14 +32,10 @@ export class ProfileResolver {
     updateAuthUserInput?: UpdateAuthUserDto,
   ) {
     try {
-      const { name, username, email } = updateAuthUserInput;
-
-      const updatedUser = await this.profileService.update({
-        id: authUser.id,
-        name,
-        username,
-        email,
-      });
+      const updatedUser = await this.profileService.update(
+        authUser,
+        updateAuthUserInput,
+      );
 
       return updatedUser;
     } catch (error) {
@@ -56,12 +52,10 @@ export class ProfileResolver {
     updateAuthUserPasswordInput?: UpdateAuthUserPasswordDto,
   ) {
     try {
-      const { oldPassword, newPassword } = updateAuthUserPasswordInput;
-      await this.profileService.updatePassword({
-        id: authUser.id,
-        oldPassword,
-        newPassword,
-      });
+      await this.profileService.updatePassword(
+        authUser,
+        updateAuthUserPasswordInput,
+      );
       return true;
     } catch (error) {
       handleError(error);
