@@ -42,10 +42,7 @@ export class UserService {
       password: hashPassword(createUserDto.password),
     });
     await this.userRepo.save(newUser);
-    return this.userRepo.findOne({
-      where: { id: newUser.id },
-      relations: this.relations,
-    });
+    return this.findOneById(newUser.id);
   }
 
   async findAll(findAllUserDto?: FindAllUserDto) {
@@ -95,7 +92,7 @@ export class UserService {
     };
   }
 
-  async findOne(id: string) {
+  async findOneById(id: string) {
     const user = await this.userRepo.findOne({
       where: { id },
       relations: this.relations,
@@ -114,7 +111,7 @@ export class UserService {
     id: string,
     { name, email, username, password, roleId }: UpdateUserDto,
   ) {
-    const user = await this.findOne(id);
+    const user = await this.findOneById(id);
     if (user.role.slug === SUPER_ADMINISTRATOR)
       throw new BadRequestException(
         this.i18n.t('error.CANNOT_UPDATE_SUPER_ADMINISTRATOR_USER', {
@@ -129,15 +126,12 @@ export class UserService {
       roleId,
       password: password ? hashPassword(password) : undefined,
     });
-    const updatedUser = await this.userRepo.findOne({
-      where: { id },
-      relations: this.relations,
-    });
+    const updatedUser = await this.findOneById(id);
     return updatedUser;
   }
 
   async remove(id: string) {
-    const user = await this.findOne(id);
+    const user = await this.findOneById(id);
     if (user.role.slug === SUPER_ADMINISTRATOR)
       throw new BadRequestException(
         this.i18n.t('error.CANNOT_DELETE_SUPER_ADMINISTRATOR_USER', {

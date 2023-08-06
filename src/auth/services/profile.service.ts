@@ -65,7 +65,7 @@ export class ProfileService {
       username,
       email,
     });
-    const updatedUser = await this.userService.findOne(id);
+    const updatedUser = await this.userService.findOneById(id);
 
     // delete user cache
     const cacheKey = await this.redisService.keys('users:*');
@@ -97,7 +97,7 @@ export class ProfileService {
     await this.userRepo.update(id, {
       password: hashPassword(newPassword),
     });
-    const updatedUser = await this.userService.findOne(id);
+    const updatedUser = await this.userService.findOneById(id);
 
     return updatedUser;
   }

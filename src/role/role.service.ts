@@ -51,10 +51,7 @@ export class RoleService {
     // delete cache
     const cacheKeys = await this.redisService.keys(`roles:*`);
     await this.redisService.del(cacheKeys);
-    return this.roleRepo.findOne({
-      where: { id: newRole.id },
-      relations: this.relations,
-    });
+    return this.findOneById(newRole.id);
   }
 
   async findAll(findAllRoleDto?: FindAllRoleDto) {
@@ -98,7 +95,7 @@ export class RoleService {
     };
   }
 
-  async findOne(id: string) {
+  async findOneById(id: string) {
     const role = await useCache(`role:${id}`, () =>
       this.roleRepo.findOne({ where: { id }, relations: this.relations }),
     );
@@ -113,7 +110,7 @@ export class RoleService {
   }
 
   async findRoleUsers(id: string, findAllUserDto: FindAllUserDto) {
-    const role = await this.findOne(id);
+    const role = await this.findOneById(id);
     const findRoleUsers = await this.userService.findWithPagination({
       ...findAllUserDto,
       roleId: role.id,
@@ -122,7 +119,7 @@ export class RoleService {
   }
 
   async update(id: string, { name }: UpdateRoleDto) {
-    const role = await this.findOne(id);
+    const role = await this.findOneById(id);
     if (role.slug === SUPER_ADMINISTRATOR)
       throw new BadRequestException(
         this.i18n.t('error.CANNOT_UPDATE_ROLE_SUPER_ADMINISTRATOR', {
@@ -138,11 +135,11 @@ export class RoleService {
     const cacheKeys = await this.redisService.keys(`roles:*`);
     await this.redisService.del([...cacheKeys, `role:${id}`]);
 
-    return await this.findOne(id);
+    return await this.findOneById(id);
   }
 
   async remove(id: string) {
-    const role = await this.findOne(id);
+    const role = await this.findOneById(id);
     if (role.slug === SUPER_ADMINISTRATOR)
       throw new BadRequestException(
         this.i18n.t('error.CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR', {

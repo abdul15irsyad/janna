@@ -25,7 +25,6 @@ export class UserResolver {
       const newUser = await this.userService.create(createUserDto);
       return newUser;
     } catch (error) {
-      console.error(error);
       handleError(error);
     }
   }
@@ -58,7 +57,7 @@ export class UserResolver {
   @Query(() => User, { name: 'user' })
   async findOne(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const user = await this.userService.findOne(id);
+      const user = await this.userService.findOneById(id);
       return user;
     } catch (error) {
       handleError(error);

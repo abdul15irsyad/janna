@@ -159,6 +159,6 @@ export class AuthService {
     const cacheKeys = await this.redisService.keys(`users:*`);
     await this.redisService.del(cacheKeys);
 
-    return await this.userService.findOne(newUser.id);
+    return await this.userService.findOneById(newUser.id);
   }
 }

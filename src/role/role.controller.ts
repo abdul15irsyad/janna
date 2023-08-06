@@ -80,7 +80,7 @@ export class RoleController {
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const role = await this.roleService.findOne(id);
+      const role = await this.roleService.findOneById(id);
       return {
         message: i18n.t('common.READ', {
           args: { property: 'ROLE' },

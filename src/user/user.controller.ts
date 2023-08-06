@@ -74,12 +74,12 @@ export class UserController {
 
   @UseGuards(new PermissionGuard({ actionSlug: 'read', moduleSlug: 'user' }))
   @Get(':id')
-  async findOne(
+  async findOneById(
     @Param('id', ParseUUIDPipe) id: string,
     @I18n() i18n: I18nContext<I18nTranslations>,
   ) {
     try {
-      const user = await this.userService.findOne(id);
+      const user = await this.userService.findOneById(id);
       return {
         message: i18n.t('common.READ', {
           args: { property: 'USER' },

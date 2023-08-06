@@ -67,7 +67,7 @@ export class RoleResolver {
   @Query(() => Role, { name: 'role' })
   async findOne(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const role = await this.roleService.findOne(id);
+      const role = await this.roleService.findOneById(id);
       return role;
     } catch (error) {
       handleError(error);
