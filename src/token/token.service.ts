@@ -1,31 +1,42 @@
 import { Injectable } from '@nestjs/common';
 import { Token } from './entities/token.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsRelations, Repository } from 'typeorm';
 import { generate } from 'randomstring';
 import { isNotEmpty } from 'class-validator';
-import { BaseService } from '../shared/services/base.service';
+import { v4 as uuidv4 } from 'uuid';
+import { handleError } from '../shared/utils/error.util';
+import { CreateTokenDto } from './dto/create-token.dto';
 
 @Injectable()
-export class TokenService extends BaseService<Token> {
-  constructor(@InjectRepository(Token) private tokenRepo: Repository<Token>) {
-    super(tokenRepo);
-  }
+export class TokenService {
+  protected relations: FindOptionsRelations<Token> = {
+    user: true,
+  };
+  constructor(@InjectRepository(Token) private tokenRepo: Repository<Token>) {}
 
   generateToken() {
     return generate({ length: 64, charset: 'alphanumeric' });
   }
 
-  async create(createTokenInput: Partial<Token>) {
-    let token: string, tokenExist: boolean;
-    do {
-      token = this.generateToken();
-      tokenExist = isNotEmpty(await this.findOneBy({ token }));
-    } while (tokenExist);
-    const createdToken = await this.tokenRepo.save({
-      ...createTokenInput,
-      token,
-    });
-    return await this.findOneBy({ id: createdToken.id });
+  async create(createTokenInput: CreateTokenDto) {
+    try {
+      let token: string, tokenExist: boolean;
+      do {
+        token = this.generateToken();
+        tokenExist = isNotEmpty(await this.tokenRepo.findOneBy({ token }));
+      } while (tokenExist);
+      const createdToken = await this.tokenRepo.save({
+        id: uuidv4(),
+        ...createTokenInput,
+        token,
+      });
+      return await this.tokenRepo.findOne({
+        where: { id: createdToken.id },
+        relations: this.relations,
+      });
+    } catch (error) {
+      handleError(error);
+    }
   }
 }

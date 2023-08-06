@@ -1,19 +1,10 @@
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { Permission } from './entities/permission.entity';
-import {
-  Inject,
-  NotFoundException,
-  ParseUUIDPipe,
-  UseGuards,
-} from '@nestjs/common';
+import { Inject, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { PermissionService } from './permission.service';
 import { PaginatedPermission } from './object-types/paginated-permission.object-type';
-import { I18n, I18nContext } from 'nestjs-i18n';
-import { I18nTranslations } from '../i18n/i18n.generated';
 import { FindAllPermissionDto } from './dto/find-all-permission.dto';
-import { useCache } from '../shared/utils/cache.util';
 import { handleError } from '../shared/utils/error.util';
-import { isEmpty } from 'class-validator';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { PermissionGuard } from './guards/permission.guard';
 
@@ -29,7 +20,6 @@ export class PermissionResolver {
   )
   @Query(() => PaginatedPermission, { name: 'permissions' })
   async findAll(
-    @I18n() i18n: I18nContext<I18nTranslations>,
     @Args('findAllPermissionInput', {
       type: () => FindAllPermissionDto,
       nullable: true,
@@ -37,10 +27,8 @@ export class PermissionResolver {
     findAllPermissionInput?: FindAllPermissionDto,
   ) {
     try {
-      const { data, totalAllData, totalPage } = await useCache(
-        `permissions:${JSON.stringify(findAllPermissionInput)}`,
-        () => this.permissionService.findWithPagination(findAllPermissionInput),
-      );
+      const { data, totalAllData, totalPage } =
+        await this.permissionService.findAll(findAllPermissionInput);
       return {
         meta: {
           currentPage:
@@ -60,20 +48,9 @@ export class PermissionResolver {
     new PermissionGuard({ actionSlug: 'read', moduleSlug: 'permission' }),
   )
   @Query(() => Permission, { name: 'permission' })
-  async findOne(
-    @Args('id', { type: () => String }, ParseUUIDPipe) id: string,
-    @I18n() i18n: I18nContext<I18nTranslations>,
-  ) {
+  async findOne(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const permission = await useCache(`permission:${id}`, () =>
-        this.permissionService.findOneBy({ id }),
-      );
-      if (isEmpty(permission))
-        throw new NotFoundException(
-          i18n.t('error.NOT_FOUND', {
-            args: { property: 'PERMISSION' },
-          }),
-        );
+      const permission = await this.permissionService.findOne(id);
       return permission;
     } catch (error) {
       handleError(error);

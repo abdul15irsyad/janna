@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { BaseService } from '../shared/services/base.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Permission } from './entities/permission.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -10,9 +9,14 @@ import {
 } from 'typeorm';
 import { parseOrderBy } from '../shared/utils/string.util';
 import { FindAllPermission } from './interfaces/find-all-permission.interface';
+import { useCache } from '../shared/utils/cache.util';
+import { FindAllPermissionDto } from './dto/find-all-permission.dto';
+import { isEmpty } from 'class-validator';
+import { I18nService } from 'nestjs-i18n';
+import { I18nTranslations } from '../i18n/i18n.generated';
 
 @Injectable()
-export class PermissionService extends BaseService<Permission> {
+export class PermissionService {
   protected relations: FindOptionsRelations<Permission> = {
     action: true,
     module: true,
@@ -21,8 +25,15 @@ export class PermissionService extends BaseService<Permission> {
   constructor(
     @InjectRepository(Permission)
     private permissionRepo: Repository<Permission>,
-  ) {
-    super(permissionRepo);
+    private i18n: I18nService<I18nTranslations>,
+  ) {}
+
+  async findAll(findAllPermissionDto: FindAllPermissionDto) {
+    const findAll = await useCache(
+      `permissions:${JSON.stringify(findAllPermissionDto)}`,
+      () => this.findWithPagination(findAllPermissionDto),
+    );
+    return findAll;
   }
 
   async findWithPagination({
@@ -64,8 +75,8 @@ export class PermissionService extends BaseService<Permission> {
           },
         ]
       : filter;
-    const totalAllData = await this.countBy(findOptionsWhere);
-    const data = await this.find({
+    const totalAllData = await this.permissionRepo.countBy(findOptionsWhere);
+    const data = await this.permissionRepo.find({
       where: findOptionsWhere,
       take: limit,
       skip: limit ? (page - 1) * limit : undefined,
@@ -82,5 +93,18 @@ export class PermissionService extends BaseService<Permission> {
       totalAllData,
       data,
     };
+  }
+
+  async findOne(id: string) {
+    const permission = await useCache(`permission:${id}`, () =>
+      this.permissionRepo.findOne({ where: { id }, relations: this.relations }),
+    );
+    if (isEmpty(permission))
+      throw new NotFoundException(
+        this.i18n.t('error.NOT_FOUND', {
+          args: { property: 'PERMISSION' },
+        }),
+      );
+    return permission;
   }
 }
