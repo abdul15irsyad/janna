@@ -60,7 +60,7 @@ export class UserService {
   }: FindAllUser = {}) {
     page = page ?? 1;
     orderBy = orderBy ?? 'createdAt';
-    orderDir = orderDir ?? 'asc';
+    orderDir = orderDir ?? 'desc';
     const filter: FindOptionsWhere<User> = {
       roleId: roleId ?? undefined,
     };

@@ -15,5 +15,6 @@
   "ORDER_BY": "orderBy",
   "ORDER_DIR": "orderDir",
   "ROLE_ID": "role id",
-  "PERMISSION": "permission"
+  "PERMISSION": "permission",
+  "NOTIFICATION": "notification"
 }

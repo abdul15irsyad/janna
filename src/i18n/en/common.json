@@ -11,5 +11,6 @@
   "READ": "read $t(label.{property})",
   "UPDATE_SUCCESSFULL": "update $t(label.{property}) successfull",
   "DELETE_SUCCESSFULL": "delete $t(label.{property}) successfull",
-  "READ_ROLE_USERS": "read role users"
+  "READ_ROLE_USERS": "read role users",
+  "MARK_ALL_AS_READ": "mark all $t(label.{property}) as read successfull"
 }

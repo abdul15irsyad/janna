@@ -1,6 +1,6 @@
 {
   "ID": "id",
-  "USER": "user",
+  "USER": "pengguna",
   "ROLE": "role",
   "NAME": "nama",
   "USERNAME": "username",
@@ -15,5 +15,6 @@
   "ORDER_BY": "orderBy",
   "ORDER_DIR": "orderDir",
   "ROLE_ID": "id role",
-  "PERMISSION": "hak akses"
+  "PERMISSION": "hak akses",
+  "NOTIFICATION": "notifikasi"
 }

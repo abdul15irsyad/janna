@@ -11,5 +11,6 @@
   "READ": "mengambil $t(label.{property})",
   "UPDATE_SUCCESSFULL": "mengubah $t(label.{property}) berhasil",
   "DELETE_SUCCESSFULL": "hapus $t(label.{property}) berhasil",
-  "READ_ROLE_USERS": "mengambil semua pengguna yang ada di role"
+  "READ_ROLE_USERS": "mengambil semua pengguna yang ada di role",
+  "MARK_ALL_AS_READ": "tandai $t(label.{property}) semua sebagai sudah dibaca sukses"
 }

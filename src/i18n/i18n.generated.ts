@@ -16,6 +16,7 @@ export type I18nTranslations = {
         "UPDATE_SUCCESSFULL": string;
         "DELETE_SUCCESSFULL": string;
         "READ_ROLE_USERS": string;
+        "MARK_ALL_AS_READ": string;
     };
     "error": {
         "NOT_FOUND": string;
@@ -49,6 +50,10 @@ export type I18nTranslations = {
         "ORDER_DIR": string;
         "ROLE_ID": string;
         "PERMISSION": string;
+        "NOTIFICATION": string;
+    };
+    "notification": {
+        "REGISTERED": string;
     };
     "validation": {
         "IS_NOT_EMPTY": string;
@@ -61,6 +66,7 @@ export type I18nTranslations = {
         "IS_IN": string;
         "IS_UUID": string;
         "IS_INT": string;
+        "IS_BOOLEAN": string;
     };
 };
 export type I18nPath = Path<I18nTranslations>;
