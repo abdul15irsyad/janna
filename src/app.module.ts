@@ -27,6 +27,7 @@ import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { PermissionModule } from './permission/permission.module';
 import { NotificationModule } from './notification/notification.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
@@ -73,6 +74,12 @@ import { NotificationModule } from './notification/notification.module';
       useGlobalPrefix: true,
       csrfPrevention: false,
       introspection: true,
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          onConnect: (params) => ({ connectionParams: params }),
+          path: '/graphql',
+        },
+      },
       context: ({ req, res }) => ({ req, res }),
       formatError: (formattedError: GraphQLFormattedError) => {
         return (
@@ -91,6 +98,7 @@ import { NotificationModule } from './notification/notification.module';
       storage: MemoryStoredFile,
       isGlobal: true,
     }),
+    SharedModule,
     RedisModule,
     MailModule,
     UserModule,

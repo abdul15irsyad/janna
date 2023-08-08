@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Inject,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -17,12 +18,17 @@ import { FindAllNotificationDto } from './dto/find-all-notification.dto';
 import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { User } from '../user/entities/user.entity';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
+import { SocketGateway } from 'src/shared/socket.gateway';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(JwtAuthGuard)
 @Controller('notifications')
 export class NotificationController {
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    @Inject(SocketGateway)
+    private socketGateway: SocketGateway,
+  ) {}
 
   @Get()
   async findAll(
@@ -31,6 +37,13 @@ export class NotificationController {
     @Body() findAllNotificationDto?: FindAllNotificationDto,
   ) {
     try {
+      this.socketGateway.server
+        .to(
+          this.socketGateway.users
+            .filter((user) => user.role.slug === 'super-administrator')
+            .map((user) => user.client.id),
+        )
+        .emit('onNewNotification', { message: 'only to super administrator' });
       const { data, totalAllData, totalPage } =
         await this.notificationService.findAll(
           authUser.id,
