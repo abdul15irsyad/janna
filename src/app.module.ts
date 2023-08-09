@@ -27,7 +27,7 @@ import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { PermissionModule } from './permission/permission.module';
 import { NotificationModule } from './notification/notification.module';
-import { SharedModule } from './shared/shared.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
   imports: [
@@ -98,7 +98,7 @@ import { SharedModule } from './shared/shared.module';
       storage: MemoryStoredFile,
       isGlobal: true,
     }),
-    SharedModule,
+    SocketModule,
     RedisModule,
     MailModule,
     UserModule,

@@ -14,8 +14,9 @@ import { JwtService } from '@nestjs/jwt';
 import { JWT_SECRET } from '../auth/auth.config';
 import { UserService } from '../user/user.service';
 import { JWTType } from '../auth/enum/jwt-type.enum';
+import { isEmpty } from 'class-validator';
 
-type UserWithSocket = User & { client: Socket };
+type UserWithSocket = User & { socketIds?: string[] };
 
 @WebSocketGateway()
 export class SocketGateway
@@ -44,13 +45,15 @@ export class SocketGateway
         token,
         { secret: JWT_SECRET },
       );
-      if (!this.users.find((user) => user.id === payload.id)) {
-        const authUser = await this.userService.findOneById(payload.id);
-        if (!this.users.find((user) => user.id === authUser.id)) {
-          (authUser as UserWithSocket).client = client;
-          this.users.push(authUser as UserWithSocket);
-        }
-      }
+      const newUser: UserWithSocket =
+        this.users.find((user) => user.id === payload.id) ??
+        (await this.userService.findOneById(payload.id));
+      newUser.socketIds = newUser.socketIds ?? [];
+      if (!newUser.socketIds.find((socketId) => socketId === client.id))
+        newUser.socketIds = [...newUser.socketIds, client.id];
+      this.users = this.users.map((user) =>
+        user.id === newUser.id ? newUser : user,
+      );
     } catch (error) {
       client.disconnect();
       if (error instanceof InternalServerErrorException) console.error(error);
@@ -75,13 +78,7 @@ export class SocketGateway
       { secret: JWT_SECRET },
     );
     const authUser = this.users.find((user) => user.id === payload.id);
-    if (authUser) return authUser;
-
-    const newUser = await this.userService.findOneById(payload.id);
-    if (!this.users.find((user) => user.id === newUser.id)) {
-      (authUser as UserWithSocket).client = client;
-      this.users.push(authUser as UserWithSocket);
-    }
-    return newUser;
+    if (isEmpty(authUser)) return null;
+    return authUser;
   }
 }

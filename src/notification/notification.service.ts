@@ -17,22 +17,18 @@ import { parseOrderBy } from '../shared/utils/string.util';
 import { Notification } from './entities/notification.entity';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
-import { Server } from 'socket.io';
 
 @Injectable()
 export class NotificationService {
   private relations: FindOptionsRelations<Notification> = {
     user: true,
   };
-  private socketServer: Server;
 
   constructor(
     @InjectRepository(Notification)
     private notificationRepo: Repository<Notification>,
     private i18n: I18nService<I18nTranslations>,
-  ) {
-    this.socketServer = new Server();
-  }
+  ) {}
 
   async create(createNotificationDto: CreateNotificationDto) {
     const newNotification = this.notificationRepo.create({
