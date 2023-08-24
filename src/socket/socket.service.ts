@@ -1,17 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { SocketGateway } from './socket.gateway';
 import { User } from '../user/entities/user.entity';
-import { DeepPartial } from 'typeorm';
 import { NEW_NOTIFICATION } from './socket.config';
 
 @Injectable()
 export class SocketService {
   constructor(private socketGateway: SocketGateway) {}
 
-  async emitNotification(
-    toUsers: User[],
-    notification: DeepPartial<Notification>,
-  ) {
+  async emitNotification(toUsers: User[], notification: any) {
     this.socketGateway.server
       .to(
         this.socketGateway.users

@@ -17,6 +17,7 @@ import { Role } from '../../role/entities/role.entity';
 import { Repository } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { SocketService } from '../../socket/socket.service';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +27,7 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UserService,
     private redisService: RedisService,
+    private socketService: SocketService,
     private i18n: I18nService<I18nTranslations>,
   ) {}
 
@@ -158,6 +160,13 @@ export class AuthService {
     // delete user cache
     const cacheKeys = await this.redisService.keys(`users:*`);
     await this.redisService.del(cacheKeys);
+
+    this.socketService.emitNotification(
+      await this.userRepo.findBy({ role: { slug: 'super-administrator' } }),
+      {
+        message: 'ada orang daftar woi',
+      },
+    );
 
     return await this.userService.findOneById(newUser.id);
   }
