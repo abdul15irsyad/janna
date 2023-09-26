@@ -4,7 +4,7 @@ import { UserModule } from '../user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { JWT_SECRET } from './auth.config';
 import { RoleModule } from '../role/role.module';
-import { JwtStrategy } from './auth.strategy';
+import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { TokenModule } from '../token/token.module';
 import { AuthController } from './controllers/auth.controller';

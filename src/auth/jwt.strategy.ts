@@ -33,7 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       if (cachedAuthUser) {
         const parsedAuthUser = datasource
           .getRepository(User)
-          .create(JSON.parse(cachedAuthUser));
+          .create(JSON.parse(cachedAuthUser) as User);
         return parsedAuthUser;
       }
       const user = await this.userService.findOneById(id);
