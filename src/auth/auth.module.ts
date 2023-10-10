@@ -7,33 +7,24 @@ import { RoleModule } from '../role/role.module';
 import { JwtStrategy } from './jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { TokenModule } from '../token/token.module';
-import { AuthController } from './controllers/auth.controller';
 import { AuthResolver } from './resolvers/auth.resolver';
-import { ProfileService } from './services/profile.service';
 import { ProfileResolver } from './resolvers/profile.resolver';
-import { ProfileController } from './controllers/profile.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Role } from '../role/entities/role.entity';
-import { User } from '../user/entities/user.entity';
+import { BullModule } from '@nestjs/bull';
+import { MAIL_QUEUE } from '../mail/mail.config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Role, User]),
     JwtModule.register({
       secret: JWT_SECRET,
     }),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({}),
     forwardRef(() => UserModule),
     forwardRef(() => RoleModule),
     forwardRef(() => TokenModule),
+    BullModule.registerQueue({
+      name: MAIL_QUEUE,
+    }),
   ],
-  controllers: [AuthController, ProfileController],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    ProfileService,
-    AuthResolver,
-    ProfileResolver,
-  ],
+  providers: [AuthService, JwtStrategy, AuthResolver, ProfileResolver],
 })
 export class AuthModule {}

@@ -35,6 +35,40 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type File {
+  createdAt: DateTime!
+  deletedAt: DateTime!
+
+  """file name di server"""
+  fileName: String!
+  id: String!
+
+  """tipe mime"""
+  mime: String!
+
+  """nama file asli"""
+  originalFileName: String!
+
+  """path folder di server"""
+  path: String!
+  updatedAt: DateTime!
+
+  """url lengkap"""
+  url: String
+
+  """yang menggupload"""
+  user: User
+  userId: String
+}
+
+input FindAllFileDto {
+  limit: Int
+  orderBy: String
+  orderDir: String
+  page: Int
+  search: String
+}
+
 input FindAllPermissionDto {
   limit: Int
   orderBy: String
@@ -88,6 +122,7 @@ type Module {
 }
 
 type Mutation {
+  createFile(file: Upload!): File!
   createRole(createRoleInput: CreateRoleDto!): Role!
   createUser(createUserInput: CreateUserDto!): User!
   deleteRole(id: String!): Boolean!
@@ -99,6 +134,11 @@ type Mutation {
   updateAuthUserPassword(updateAuthUserPasswordInput: UpdateAuthUserPasswordDto!): Boolean!
   updateRole(updateRoleInput: UpdateRoleDto!): Role!
   updateUser(updateUserInput: UpdateUserDto!): User!
+}
+
+type PaginatedFile {
+  data: [File!]!
+  meta: Meta
 }
 
 type PaginatedPermission {
@@ -128,6 +168,7 @@ type Permission {
 type Query {
   authUser: User!
   error: String!
+  files(findAllFileInput: FindAllFileDto): PaginatedFile
   permission(id: String!): Permission!
   permissions(findAllPermissionInput: FindAllPermissionDto): PaginatedPermission!
   role(id: String!): Role!
@@ -191,6 +232,9 @@ input UpdateUserDto {
   roleId: String
   username: String
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type User {
   createdAt: DateTime!

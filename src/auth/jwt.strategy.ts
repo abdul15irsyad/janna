@@ -9,6 +9,7 @@ import datasource from '../database/database.datasource';
 import { User } from '../user/entities/user.entity';
 import { RedisService } from '../redis/redis.service';
 import { JWTType } from './enum/jwt-type.enum';
+import { useCache } from '../shared/utils/cache.util';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -36,7 +37,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
           .create(JSON.parse(cachedAuthUser) as User);
         return parsedAuthUser;
       }
-      const user = await this.userService.findOneById(id);
+      const user = await useCache(`user:${id}`, () =>
+        this.userService.findOneBy({ id }),
+      );
       if (!user) throw new UnauthorizedException();
       else
         await this.redisService.setex(

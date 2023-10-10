@@ -47,7 +47,7 @@ export class SocketGateway
       );
       const newUser: UserWithSocket =
         this.users.find((user) => user.id === payload.id) ??
-        (await this.userService.findOneById(payload.id));
+        (await this.userService.findOneBy({ id: payload.id }));
       newUser.socketIds = newUser.socketIds ?? [];
       if (!newUser.socketIds.find((socketId) => socketId === client.id))
         newUser.socketIds = [...newUser.socketIds, client.id];

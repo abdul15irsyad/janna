@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { BaseEntity } from '../../shared/entities/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 
 @Entity('modules')
 @ObjectType()
@@ -10,6 +10,7 @@ export class Module extends BaseEntity {
   name: string;
 
   @Field(() => String)
+  @Index({ unique: true, where: 'deleted_at is null' })
   @Column('varchar', { unique: true })
   slug: string;
 

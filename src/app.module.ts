@@ -28,6 +28,9 @@ import { MemoryStoredFile, NestjsFormDataModule } from 'nestjs-form-data';
 import { PermissionModule } from './permission/permission.module';
 import { NotificationModule } from './notification/notification.module';
 import { SocketModule } from './socket/socket.module';
+import { BullModule } from '@nestjs/bull';
+import { REDIS_OPTIONS } from './redis/redis.config';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -97,6 +100,14 @@ import { SocketModule } from './socket/socket.module';
     NestjsFormDataModule.config({
       storage: MemoryStoredFile,
       isGlobal: true,
+      limits: {
+        fileSize: 100_000,
+      },
+    }),
+    BullModule.forRootAsync({
+      useFactory: () => ({
+        redis: { ...REDIS_OPTIONS, lazyConnect: false },
+      }),
     }),
     SocketModule,
     RedisModule,
@@ -107,6 +118,7 @@ import { SocketModule } from './socket/socket.module';
     TokenModule,
     PermissionModule,
     NotificationModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService, AppResolver],

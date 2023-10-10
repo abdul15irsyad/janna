@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../shared/entities/base.entity';
 import { Role } from '../../role/entities/role.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
@@ -11,10 +11,12 @@ export class User extends BaseEntity {
   name: string;
 
   @Field(() => String)
+  @Index({ unique: true, where: 'deleted_at is null' })
   @Column('varchar')
   username: string;
 
   @Field(() => String)
+  @Index({ unique: true, where: 'deleted_at is null' })
   @Column('varchar')
   email: string;
 

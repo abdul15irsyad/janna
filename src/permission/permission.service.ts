@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Permission } from './entities/permission.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -9,14 +9,10 @@ import {
 } from 'typeorm';
 import { parseOrderBy } from '../shared/utils/string.util';
 import { FindAllPermission } from './interfaces/find-all-permission.interface';
-import { useCache } from '../shared/utils/cache.util';
-import { FindAllPermissionDto } from './dto/find-all-permission.dto';
-import { isEmpty } from 'class-validator';
-import { I18nService } from 'nestjs-i18n';
-import { I18nTranslations } from '../i18n/i18n.generated';
+import { BaseService } from '../shared/services/base.service';
 
 @Injectable()
-export class PermissionService {
+export class PermissionService extends BaseService<Permission> {
   protected relations: FindOptionsRelations<Permission> = {
     action: true,
     module: true,
@@ -25,15 +21,8 @@ export class PermissionService {
   constructor(
     @InjectRepository(Permission)
     private permissionRepo: Repository<Permission>,
-    private i18n: I18nService<I18nTranslations>,
-  ) {}
-
-  async findAll(findAllPermissionDto: FindAllPermissionDto) {
-    const findAll = await useCache(
-      `permissions:${JSON.stringify(findAllPermissionDto)}`,
-      () => this.findWithPagination(findAllPermissionDto),
-    );
-    return findAll;
+  ) {
+    super(permissionRepo);
   }
 
   async findWithPagination({
@@ -93,18 +82,5 @@ export class PermissionService {
       totalAllData,
       data,
     };
-  }
-
-  async findOne(id: string) {
-    const permission = await useCache(`permission:${id}`, () =>
-      this.permissionRepo.findOne({ where: { id }, relations: this.relations }),
-    );
-    if (isEmpty(permission))
-      throw new NotFoundException(
-        this.i18n.t('error.NOT_FOUND', {
-          args: { property: 'PERMISSION' },
-        }),
-      );
-    return permission;
   }
 }

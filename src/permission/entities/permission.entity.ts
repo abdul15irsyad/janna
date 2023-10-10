@@ -31,7 +31,10 @@ export class Permission extends BaseEntity {
   @JoinColumn({ name: 'module_id' })
   module: Module;
 
-  @ManyToMany(() => Role, (role: Role) => role.permissions)
+  @ManyToMany(() => Role, (role: Role) => role.permissions, {
+    onDelete: 'CASCADE',
+    onUpdate: 'NO ACTION',
+  })
   @JoinTable({
     name: 'permission_roles',
     joinColumn: {
