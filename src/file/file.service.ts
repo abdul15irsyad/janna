@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import {
-  DeepPartial,
   FindOptionsRelations,
   FindOptionsWhere,
   ILike,
@@ -10,30 +9,25 @@ import { File } from './entities/file.entity';
 import { parseOrderBy } from '../shared/utils/string.util';
 import { FindAllFile } from './interfaces/find-all-file.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import { createWriteStream, existsSync, unlinkSync } from 'fs';
+import { existsSync, unlinkSync, writeFileSync } from 'fs';
 import * as mime from 'mime-types';
-import { FileUpload } from 'graphql-upload-ts';
 import dayjs from 'dayjs';
 import { generate } from 'randomstring';
-import { join } from 'path';
 import { IMAGE_MIMES, UPLOAD_PATH } from './file.config';
 import webp from 'webp-converter';
 import { fromFile } from 'file-type';
+import { BaseService } from '../shared/services/base.service';
+import { MemoryStoredFile } from 'nestjs-form-data';
 
 @Injectable()
-export class FileService {
-  constructor(@InjectRepository(File) private fileRepo: Repository<File>) {}
+export class FileService extends BaseService<File> {
+  constructor(@InjectRepository(File) private fileRepo: Repository<File>) {
+    super(fileRepo);
+  }
 
   protected relations: FindOptionsRelations<File> = {
     user: true,
   };
-
-  async create(createFile: DeepPartial<File>) {
-    const newFile = this.fileRepo.create(createFile);
-    console.log('start create file database', createFile, newFile);
-    await this.fileRepo.save(newFile);
-    return this.findOneById(newFile.id);
-  }
 
   async findWithPagination({
     page,
@@ -71,36 +65,21 @@ export class FileService {
     };
   }
 
-  async findOneById(id: string) {
-    const file = await this.fileRepo.findOne({
-      where: { id },
-      relations: this.relations,
-    });
-    return file;
-  }
-
-  async uploadFile(fileUpload: FileUpload, uploadPath?: string) {
+  async uploadFile(file: MemoryStoredFile, uploadPath?: string) {
     const uploadPathWithPublic = uploadPath
-      ? `./public/${uploadPath}`
-      : `./public/${UPLOAD_PATH}`;
-    if (!fileUpload) return null;
-    const { createReadStream, filename, mimetype } = fileUpload;
-    const ext = mime.extension(mimetype);
+      ? `public/${uploadPath}`
+      : `public/${UPLOAD_PATH}`;
+    if (!file) return null;
+    const ext = mime.extension(file.mimeType);
     const timestamp = dayjs().valueOf();
     const newFileName = `${timestamp}${generate({
       length: 8,
       charset: 'numeric',
     })}`;
     let fileName = `${newFileName}.${ext}`;
-    // writeFileSync(`${uploadPathWithPublic}/${fileName}`, file.buffer);
-    await new Promise((resolve, reject) => {
-      return createReadStream()
-        .pipe(createWriteStream(join(uploadPathWithPublic, fileName)))
-        .on('finish', () => resolve(true))
-        .on('error', (error) => reject(error));
-    });
+    writeFileSync(`${uploadPathWithPublic}/${fileName}`, file.buffer);
 
-    if (IMAGE_MIMES.find((mime) => mime === mimetype)) {
+    if (IMAGE_MIMES.find((mime) => mime == file.mimeType)) {
       // convert to webp
       webp.grant_permission();
       if (existsSync(`${uploadPathWithPublic}/${fileName}`)) {
@@ -108,11 +87,11 @@ export class FileService {
         await webp.cwebp(
           `${uploadPathWithPublic}/${fileName}`,
           `${uploadPathWithPublic}/${newFileName}.webp`,
-          `-q 75`,
+          file.size > 1024 * 500 ? `-q 50` : undefined,
         );
         // delete the original file
         if (
-          fileName !== `${newFileName}.webp` &&
+          fileName != `${newFileName}.webp` &&
           existsSync(`${uploadPathWithPublic}/${fileName}`)
         ) {
           const path = `${uploadPathWithPublic}/${fileName}`;
@@ -125,8 +104,24 @@ export class FileService {
     return {
       path: uploadPath ?? UPLOAD_PATH,
       fileName,
-      originalFileName: filename,
+      originalFileName: file.originalName,
       mime: (await fromFile(`${uploadPathWithPublic}/${fileName}`)).mime,
     };
+  }
+
+  async uploadAndCreate({
+    fileDto,
+    authUserId,
+  }: {
+    fileDto: MemoryStoredFile;
+    authUserId: string;
+  }) {
+    const uploadedFile = fileDto ? await this.uploadFile(fileDto) : null;
+    return uploadedFile
+      ? await this.create({
+          ...uploadedFile,
+          userId: authUserId,
+        })
+      : null;
   }
 }

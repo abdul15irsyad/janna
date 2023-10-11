@@ -25,7 +25,7 @@ import { PaginatedUser } from '../user/object-types/paginated-user.object-type';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { PermissionGuard } from '../permission/guards/permission.guard';
 import { useCache } from '../shared/utils/cache.util';
-import { cleanNull } from '../shared/utils/object.util';
+import { cleanNull, setMeta } from '../shared/utils/object.util';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../i18n/i18n.generated';
 import { RedisService } from '../redis/redis.service';
@@ -70,18 +70,13 @@ export class RoleResolver {
     findAllRoleDto?: FindAllRoleDto,
   ) {
     try {
-      const { data, totalAllData, totalPage } = await useCache(
+      const roles = await useCache(
         `roles:${JSON.stringify(cleanNull(findAllRoleDto))}`,
         () => this.roleService.findWithPagination(findAllRoleDto),
       );
       return {
-        meta: {
-          currentPage: data.length > 0 ? findAllRoleDto?.page ?? 1 : null,
-          totalPage,
-          totalData: data.length,
-          totalAllData,
-        },
-        data,
+        meta: setMeta({ page: findAllRoleDto.page, ...roles }),
+        data: roles.data,
       };
     } catch (error) {
       handleError(error);
@@ -92,7 +87,9 @@ export class RoleResolver {
   @Query(() => Role, { name: 'role' })
   async findOne(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const role = await this.roleService.findOneBy({ id });
+      const role = await useCache(`role:${id}`, () =>
+        this.roleService.findOneBy({ id }),
+      );
       if (isEmpty(role))
         throw new NotFoundException(
           this.i18n.t('error.NOT_FOUND', {
@@ -113,7 +110,16 @@ export class RoleResolver {
     updateRoleDto: UpdateRoleDto,
   ) {
     try {
-      const role = await this.roleService.findOneBy({ id: updateRoleDto.id });
+      const role = await useCache(`role:${updateRoleDto.id}`, () =>
+        this.roleService.findOneBy({ id: updateRoleDto.id }),
+      );
+      if (isEmpty(role))
+        throw new NotFoundException(
+          this.i18n.t('error.NOT_FOUND', {
+            args: { property: 'ROLE' },
+            lang: I18nContext.current().lang,
+          }),
+        );
       if (role.slug === SUPER_ADMINISTRATOR)
         throw new BadRequestException(
           this.i18n.t('error.CANNOT_UPDATE_ROLE_SUPER_ADMINISTRATOR', {
@@ -143,6 +149,13 @@ export class RoleResolver {
   async remove(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
       const role = await this.roleService.findOneBy({ id });
+      if (isEmpty(role))
+        throw new NotFoundException(
+          this.i18n.t('error.NOT_FOUND', {
+            args: { property: 'ROLE' },
+            lang: I18nContext.current().lang,
+          }),
+        );
       if (role.slug === SUPER_ADMINISTRATOR)
         throw new BadRequestException(
           this.i18n.t('error.CANNOT_DELETE_ROLE_SUPER_ADMINISTRATOR', {
@@ -180,18 +193,13 @@ export class RoleResolver {
         ...findAllUserDto,
         roleId: role.id,
       };
-      const { totalPage, totalAllData, data } = await useCache(
+      const users = await useCache(
         `users:${JSON.stringify(cleanNull(options))}`,
         () => this.userService.findWithPagination(options),
       );
       return {
-        meta: {
-          currentPage: totalAllData > 0 ? findAllUserDto?.page ?? 1 : null,
-          totalPage,
-          totalData: data.length,
-          totalAllData,
-        },
-        data,
+        meta: setMeta({ page: findAllUserDto.page, ...users }),
+        data: users.data,
       };
     } catch (error) {
       handleError(error);

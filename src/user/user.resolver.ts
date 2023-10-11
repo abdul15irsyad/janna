@@ -19,7 +19,7 @@ import { I18nContext, I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../i18n/i18n.generated';
 import { hashPassword } from '../shared/utils/password.util';
 import { useCache } from '../shared/utils/cache.util';
-import { cleanNull } from '../shared/utils/object.util';
+import { cleanNull, setMeta } from '../shared/utils/object.util';
 import { SUPER_ADMINISTRATOR } from '../role/role.config';
 import { RedisService } from '../redis/redis.service';
 
@@ -59,18 +59,13 @@ export class UserResolver {
     findAllUserDto?: FindAllUserDto,
   ) {
     try {
-      const { data, totalAllData, totalPage } = await useCache(
+      const users = await useCache(
         `users:${JSON.stringify(cleanNull(findAllUserDto))}`,
         () => this.userService.findWithPagination(findAllUserDto),
       );
       return {
-        meta: {
-          currentPage: data.length > 0 ? findAllUserDto?.page ?? 1 : null,
-          totalPage,
-          totalData: data.length,
-          totalAllData,
-        },
-        data,
+        meta: setMeta({ page: findAllUserDto.page, ...users }),
+        data: users.data,
       };
     } catch (error) {
       handleError(error);
@@ -101,7 +96,9 @@ export class UserResolver {
   @Mutation(() => User, { name: 'updateUser' })
   async update(@Args('updateUserInput') updateUserInput: UpdateUserDto) {
     try {
-      const user = await this.userService.findOneBy({ id: updateUserInput.id });
+      const user = await useCache(`user:${updateUserInput.id}`, () =>
+        this.userService.findOneBy({ id: updateUserInput.id }),
+      );
       if (isEmpty(user))
         throw new NotFoundException(
           this.i18n.t('error.NOT_FOUND', {
@@ -131,7 +128,9 @@ export class UserResolver {
   @Mutation(() => Boolean, { name: 'deleteUser' })
   async remove(@Args('id', { type: () => String }, ParseUUIDPipe) id: string) {
     try {
-      const user = await this.userService.findOneBy({ id });
+      const user = await useCache(`user:${id}`, () =>
+        this.userService.findOneBy({ id }),
+      );
       if (isEmpty(user))
         throw new NotFoundException(
           this.i18n.t('error.NOT_FOUND', {

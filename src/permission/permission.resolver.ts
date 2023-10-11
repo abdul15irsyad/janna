@@ -13,7 +13,7 @@ import { handleError } from '../shared/utils/error.util';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { PermissionGuard } from './guards/permission.guard';
 import { useCache } from '../shared/utils/cache.util';
-import { cleanNull } from '../shared/utils/object.util';
+import { cleanNull, setMeta } from '../shared/utils/object.util';
 import { isEmpty } from 'class-validator';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../i18n/i18n.generated';
@@ -38,19 +38,13 @@ export class PermissionResolver {
     findAllPermissionInput?: FindAllPermissionDto,
   ) {
     try {
-      const { data, totalAllData, totalPage } = await useCache(
+      const permissions = await useCache(
         `permissions:${JSON.stringify(cleanNull(findAllPermissionInput))}`,
         () => this.permissionService.findWithPagination(findAllPermissionInput),
       );
       return {
-        meta: {
-          currentPage:
-            totalAllData > 0 ? findAllPermissionInput?.page ?? 1 : null,
-          totalPage,
-          totalData: data.length,
-          totalAllData,
-        },
-        data,
+        meta: setMeta({ page: findAllPermissionInput?.page, ...permissions }),
+        data: permissions.data,
       };
     } catch (error) {
       handleError(error);

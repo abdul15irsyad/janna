@@ -5,3 +5,22 @@ export const cleanNull = <T>(object: T): Partial<T> => {
   );
   return Object.fromEntries(filteredEntries) as Partial<T>;
 };
+
+export const setMeta = <T>({
+  page,
+  totalPage,
+  data,
+  totalAllData,
+}: {
+  page: number;
+  totalPage: number;
+  data: T[];
+  totalAllData: number;
+}) => {
+  return {
+    currentPage: totalAllData > 0 ? page ?? 1 : null,
+    totalPage,
+    totalData: data.length,
+    totalAllData,
+  };
+};

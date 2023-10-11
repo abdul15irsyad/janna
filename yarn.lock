@@ -2898,7 +2898,7 @@ bull@*, bull@^4.11.3:
     semver "^7.5.2"
     uuid "^8.3.0"
 
-busboy@1.6.0, busboy@^1.0.0, busboy@^1.6.0:
+busboy@^1.0.0, busboy@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/busboy/-/busboy-1.6.0.tgz#966ea36a9502e43cdb9146962523b92f531f6893"
   integrity sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==
@@ -4877,13 +4877,6 @@ graphql-tag@2.12.6, graphql-tag@^2.11.0:
   integrity sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg==
   dependencies:
     tslib "^2.1.0"
-
-graphql-upload-ts@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/graphql-upload-ts/-/graphql-upload-ts-2.1.0.tgz#06ee87bb8bec594314dc54c87b6779f71e96282a"
-  integrity sha512-6e6n2FTSZNXGRrwE+4Y1DCeIloGH1pm88OB6KgmfcT9Y+6zM5a+TSUYGop4Vg85cx25QIPkNpP3g1NKiRbF6Xw==
-  dependencies:
-    busboy "1.6.0"
 
 graphql-ws@5.14.0:
   version "5.14.0"

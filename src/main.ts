@@ -5,7 +5,6 @@ import { AppModule } from './app.module';
 import { I18nValidationPipe } from 'nestjs-i18n';
 import datasource from './database/database.datasource';
 import { I18nValidationExceptionFilter } from './shared/filters/i18n-validation-exception.filter';
-import { graphqlUploadExpress } from 'graphql-upload-ts';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,12 +20,6 @@ async function bootstrap() {
       whitelist: true,
       transform: true,
       stopAtFirstError: true,
-    }),
-  );
-  app.use(
-    graphqlUploadExpress({
-      maxFileSize: 50_000,
-      maxFiles: 10,
     }),
   );
   await datasource.initialize();
