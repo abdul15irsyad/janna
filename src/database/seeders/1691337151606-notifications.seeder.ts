@@ -1,6 +1,5 @@
 import { DataSource, DeepPartial } from 'typeorm';
 import { Seeder } from '@jorgebodega/typeorm-seeding';
-import { NODE_ENV } from '../../app.config';
 import dayjs from 'dayjs';
 import { SeederEntity } from '../entities/seeder.entity';
 import { Notification } from '../../notification/entities/notification.entity';
@@ -9,8 +8,14 @@ import { User } from '../../user/entities/user.entity';
 import { SUPER_ADMINISTRATOR } from '../../role/role.config';
 import { random } from '../../shared/utils/array.util';
 import { randomDate } from '../../shared/utils/date.util';
+import { ConfigService } from '@nestjs/config';
+import { NodeEnvironment } from '../../app.config';
 
 export default class NotificationsSeeder extends Seeder {
+  constructor(private configService: ConfigService) {
+    super();
+  }
+
   public async run(datasource: DataSource): Promise<void> {
     // if seeder already executed
     if (
@@ -25,7 +30,9 @@ export default class NotificationsSeeder extends Seeder {
       .find({ relations: { role: true } });
 
     const notifications: DeepPartial<Notification>[] = [];
-    if (NODE_ENV !== 'production') {
+    if (
+      this.configService.get<NodeEnvironment>('app.NODE_ENV') !== 'production'
+    ) {
       for (const user of users.filter((user) => user.role.slug === 'user')) {
         notifications.push({
           name: 'REGISTERED',

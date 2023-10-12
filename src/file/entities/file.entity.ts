@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { BASE_URL } from '../../app.config';
 import { BaseEntity } from '../../shared/entities/base.entity';
 import { User } from '../../user/entities/user.entity';
 import { AfterLoad, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import appConfig from 'src/app.config';
 
 @ObjectType()
 @Entity('files')
@@ -47,6 +47,8 @@ export class File extends BaseEntity {
   setFile() {
     this.url =
       this.url ??
-      `${BASE_URL}/${this.path}/${encodeURIComponent(this.fileName)}`;
+      `${appConfig().BASE_URL}/${this.path}/${encodeURIComponent(
+        this.fileName,
+      )}`;
   }
 }

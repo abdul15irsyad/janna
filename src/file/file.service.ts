@@ -13,15 +13,18 @@ import { existsSync, unlinkSync, writeFileSync } from 'fs';
 import * as mime from 'mime-types';
 import dayjs from 'dayjs';
 import { generate } from 'randomstring';
-import { IMAGE_MIMES, UPLOAD_PATH } from './file.config';
 import webp from 'webp-converter';
 import { fromFile } from 'file-type';
 import { BaseService } from '../shared/services/base.service';
 import { MemoryStoredFile } from 'nestjs-form-data';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class FileService extends BaseService<File> {
-  constructor(@InjectRepository(File) private fileRepo: Repository<File>) {
+  constructor(
+    @InjectRepository(File) private fileRepo: Repository<File>,
+    private configService: ConfigService,
+  ) {
     super(fileRepo);
   }
 
@@ -68,7 +71,7 @@ export class FileService extends BaseService<File> {
   async uploadFile(file: MemoryStoredFile, uploadPath?: string) {
     const uploadPathWithPublic = uploadPath
       ? `public/${uploadPath}`
-      : `public/${UPLOAD_PATH}`;
+      : `public/${this.configService.get<string>('file.UPLOAD_PATH')}`;
     if (!file) return null;
     const ext = mime.extension(file.mimeType);
     const timestamp = dayjs().valueOf();
@@ -79,7 +82,11 @@ export class FileService extends BaseService<File> {
     let fileName = `${newFileName}.${ext}`;
     writeFileSync(`${uploadPathWithPublic}/${fileName}`, file.buffer);
 
-    if (IMAGE_MIMES.find((mime) => mime == file.mimeType)) {
+    if (
+      this.configService
+        .get<string[]>('file.IMAGE_MIMES')
+        .find((mime) => mime == file.mimeType)
+    ) {
       // convert to webp
       webp.grant_permission();
       if (existsSync(`${uploadPathWithPublic}/${fileName}`)) {
@@ -102,7 +109,7 @@ export class FileService extends BaseService<File> {
     }
 
     return {
-      path: uploadPath ?? UPLOAD_PATH,
+      path: uploadPath ?? this.configService.get<string>('file.UPLOAD_PATH'),
       fileName,
       originalFileName: file.originalName,
       mime: (await fromFile(`${uploadPathWithPublic}/${fileName}`)).mime,

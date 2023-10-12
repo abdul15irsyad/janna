@@ -7,6 +7,7 @@ import { AuthUser } from '../auth/decorators/auth-user.decorator';
 import { User } from '../user/entities/user.entity';
 import { I18nContext, I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../i18n/i18n.generated';
+import { FormDataRequest } from 'nestjs-form-data';
 
 @UseGuards(JwtAuthGuard)
 @Controller('files')
@@ -17,6 +18,7 @@ export class FileController {
   ) {}
 
   @Post()
+  @FormDataRequest()
   async create(
     @Body() createFileDto: CreateFileDto,
     @AuthUser() authUser: User,
@@ -34,6 +36,7 @@ export class FileController {
         data: file,
       };
     } catch (error) {
+      console.error(error);
       handleError(error);
     }
   }

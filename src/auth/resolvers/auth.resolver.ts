@@ -11,7 +11,6 @@ import { User } from '../../user/entities/user.entity';
 import { RegisterDto } from '../dto/register.dto';
 import { CustomThrottlerGuard } from '../../shared/guards/throttle.guard';
 import { InjectQueue } from '@nestjs/bull';
-import { MAIL_QUEUE } from '../../mail/mail.config';
 import { Queue } from 'bull';
 import { UserService } from '../../user/user.service';
 import { compareSync } from 'bcrypt';
@@ -20,13 +19,13 @@ import { I18nContext, I18nService } from 'nestjs-i18n';
 import { I18nTranslations } from '../../i18n/i18n.generated';
 import { JwtService } from '@nestjs/jwt';
 import { JWTType } from '../enum/jwt-type.enum';
-import { ACCESS_TOKEN_EXPIRED, REFRESH_TOKEN_EXPIRED } from '../auth.config';
 import { GrantType } from '../enum/grant-type.enum';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { RoleService } from '../../role/role.service';
 import { RedisService } from '../../redis/redis.service';
 import { SocketService } from '../../socket/socket.service';
+import { ConfigService } from '@nestjs/config';
 
 @UseGuards(CustomThrottlerGuard)
 @Resolver()
@@ -39,7 +38,8 @@ export class AuthResolver {
     private socketService: SocketService,
     private jwtService: JwtService,
     private i18n: I18nService<I18nTranslations>,
-    @InjectQueue(MAIL_QUEUE) private readonly mailQueue: Queue,
+    private configService: ConfigService,
+    @InjectQueue('mail') private readonly mailQueue: Queue,
   ) {}
 
   @Mutation(() => LoginObject)
@@ -68,22 +68,34 @@ export class AuthResolver {
       // create json web token
       const accessToken = this.jwtService.sign(
         { id: authUser.id, type: JWTType.ACCESS_TOKEN },
-        { expiresIn: ACCESS_TOKEN_EXPIRED },
+        {
+          expiresIn: this.configService.get<number>(
+            'auth.ACCESS_TOKEN_EXPIRED',
+          ),
+        },
       );
       const refreshToken = this.jwtService.sign(
         { id: authUser.id, type: JWTType.REFRESH_TOKEN },
-        { expiresIn: REFRESH_TOKEN_EXPIRED },
+        {
+          expiresIn: this.configService.get<number>(
+            'auth.REFRESH_TOKEN_EXPIRED',
+          ),
+        },
       );
 
       return {
         accessToken: {
           token: accessToken,
-          expiresIn: ACCESS_TOKEN_EXPIRED,
+          expiresIn: this.configService.get<number>(
+            'auth.ACCESS_TOKEN_EXPIRED',
+          ),
           grantType: GrantType.PASSWORD,
         },
         refreshToken: {
           token: refreshToken,
-          expiresIn: REFRESH_TOKEN_EXPIRED,
+          expiresIn: this.configService.get<number>(
+            'auth.REFRESH_TOKEN_EXPIRED',
+          ),
         },
       };
     } catch (error) {
@@ -113,22 +125,34 @@ export class AuthResolver {
       // create json web token
       const newAccessToken = this.jwtService.sign(
         { id: payload.id, type: JWTType.ACCESS_TOKEN },
-        { expiresIn: ACCESS_TOKEN_EXPIRED },
+        {
+          expiresIn: this.configService.get<number>(
+            'auth.ACCESS_TOKEN_EXPIRED',
+          ),
+        },
       );
       const newRefreshToken = this.jwtService.sign(
         { id: payload.id, type: JWTType.REFRESH_TOKEN },
-        { expiresIn: REFRESH_TOKEN_EXPIRED },
+        {
+          expiresIn: this.configService.get<number>(
+            'auth.REFRESH_TOKEN_EXPIRED',
+          ),
+        },
       );
 
       return {
         accessToken: {
           token: newAccessToken,
-          expiresIn: ACCESS_TOKEN_EXPIRED,
+          expiresIn: this.configService.get<number>(
+            'auth.ACCESS_TOKEN_EXPIRED',
+          ),
           grantType: GrantType.REFRESH_TOKEN,
         },
         refreshToken: {
           token: newRefreshToken,
-          expiresIn: REFRESH_TOKEN_EXPIRED,
+          expiresIn: this.configService.get<number>(
+            'auth.REFRESH_TOKEN_EXPIRED',
+          ),
         },
       };
     } catch (error) {

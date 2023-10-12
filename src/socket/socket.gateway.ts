@@ -11,10 +11,10 @@ import {
 import { Server, Socket } from 'socket.io';
 import { User } from '../user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { JWT_SECRET } from '../auth/auth.config';
 import { UserService } from '../user/user.service';
 import { JWTType } from '../auth/enum/jwt-type.enum';
 import { isEmpty } from 'class-validator';
+import { ConfigService } from '@nestjs/config';
 
 type UserWithSocket = User & { socketIds?: string[] };
 
@@ -30,6 +30,7 @@ export class SocketGateway
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
+    private configService: ConfigService,
   ) {
     this.logger = new Logger(SocketGateway.name);
   }
@@ -43,7 +44,7 @@ export class SocketGateway
       const token = client.handshake.headers.authorization.split(' ')[1];
       const payload: { id: string; type: JWTType } = this.jwtService.verify(
         token,
-        { secret: JWT_SECRET },
+        { secret: this.configService.get<string>('auth.JWT_SECRET') },
       );
       const newUser: UserWithSocket =
         this.users.find((user) => user.id === payload.id) ??
@@ -75,7 +76,7 @@ export class SocketGateway
     const token = client.handshake.headers.authorization.split(' ')[1];
     const payload: { id: string; type: JWTType } = this.jwtService.verify(
       token,
-      { secret: JWT_SECRET },
+      { secret: this.configService.get<string>('auth.JWT_SECRET') },
     );
     const authUser = this.users.find((user) => user.id === payload.id);
     if (isEmpty(authUser)) return null;

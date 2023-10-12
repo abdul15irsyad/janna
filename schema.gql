@@ -122,7 +122,6 @@ type Module {
 }
 
 type Mutation {
-  createFile(file: Upload!): File!
   createRole(createRoleInput: CreateRoleDto!): Role!
   createUser(createUserInput: CreateUserDto!): User!
   deleteRole(id: String!): Boolean!
@@ -232,9 +231,6 @@ input UpdateUserDto {
   roleId: String
   username: String
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 type User {
   createdAt: DateTime!

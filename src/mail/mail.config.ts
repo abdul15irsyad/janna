@@ -1,10 +1,9 @@
-import { config } from 'dotenv';
+import { registerAs } from '@nestjs/config';
 
-config({ path: '.env' });
-export const SMTP_HOST = process.env.SMTP_HOST || 'smtp.mailtrap.io';
-export const SMTP_PORT = process.env.SMTP_PORT ? +process.env.SMTP_PORT : 2525;
-export const SMTP_USER = process.env.SMTP_USER;
-export const SMTP_PASS = process.env.SMTP_PASS;
-export const SMTP_FROM = process.env.SMTP_FROM;
-
-export const MAIL_QUEUE = 'mail';
+export default registerAs('mail', () => ({
+  SMTP_HOST: process.env.SMTP_HOST || 'smtp.mailtrap.io',
+  SMTP_PORT: process.env.SMTP_PORT ? +process.env.SMTP_PORT : 2525,
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASS: process.env.SMTP_PASS,
+  SMTP_FROM: process.env.SMTP_FROM,
+}));

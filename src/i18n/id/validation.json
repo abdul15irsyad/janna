@@ -9,5 +9,8 @@
   "IS_IN": "$t(label.{property}) harus salah satu nilai berikut: {constraints.0}",
   "IS_UUID": "$t(label.{property}) harus berupa uuid",
   "IS_INT": "$t(label.{property}) harus berupa integer (bilangan bulat)",
-  "IS_BOOLEAN": "$t(label.{property}) harus berupa boolean (true atau false)"
+  "IS_BOOLEAN": "$t(label.{property}) harus berupa boolean (true atau false)",
+  "MAX_LENGTH": "$t(label.{property}) maksimal {constraints.0} karakter",
+  "MAX_FILE_SIZE": "ukuran file maksimal adalah {maxFileSizeInMB} MB",
+  "HAS_MIME_TYPE": "tipe mime $t(label.{property}) harus salah satu mime berikut: {constraints.0}"
 }

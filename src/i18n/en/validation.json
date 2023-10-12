@@ -9,5 +9,8 @@
   "IS_IN": "$t(label.{property}) must be one of the following values: {constraints.0}",
   "IS_UUID": "$t(label.{property}) should be an uuid",
   "IS_INT": "$t(label.{property}) must be an integer number",
-  "IS_BOOLEAN": "$t(label.{property}) must be a boolean (true or false)"
+  "IS_BOOLEAN": "$t(label.{property}) must be a boolean (true or false)",
+  "MAX_LENGTH": "$t(label.{property}) maximum {constraints.0} character",
+  "MAX_FILE_SIZE": "max file size is {maxFileSizeInMB} MB",
+  "HAS_MIME_TYPE": "$t(label.{property}) mime type must be one of the following values: {constraints.0}"
 }

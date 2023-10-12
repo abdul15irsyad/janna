@@ -1,12 +1,13 @@
 import { IsNotEmpty } from 'class-validator';
 import { IsFile, MaxFileSize, MemoryStoredFile } from 'nestjs-form-data';
 import { i18nValidationMessage } from 'nestjs-i18n';
-import { MAX_UPLOAD_FILE_SIZE } from '../file.config';
+import fileConfig from '../file.config';
 
 export class CreateFileDto {
-  @MaxFileSize(MAX_UPLOAD_FILE_SIZE, {
+  @MaxFileSize(fileConfig().MAX_UPLOAD_FILE_SIZE, {
     message: i18nValidationMessage('validation.MAX_FILE_SIZE', {
       property: 'FILE',
+      maxFileSizeInMB: fileConfig().MAX_UPLOAD_FILE_SIZE / (1024 * 1024),
     }),
   })
   @IsFile({

@@ -1,19 +1,19 @@
-import { config } from 'dotenv';
-config({ path: '.env' });
+import { registerAs } from '@nestjs/config';
 
-type NodeEnvironment = 'development' | 'staging' | 'production';
-export const NODE_ENV =
-  (process.env.NODE_ENV as NodeEnvironment) ?? 'development';
-export const APP_NAME = process.env.APP_NAME || 'Janna';
-export const PORT = process.env.PORT ? +process.env.PORT : 3000;
-export const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
-export const ORIGINS = process.env.ORIGINS
-  ? process.env.ORIGINS.split(',')
-  : '*';
+export type NodeEnvironment = 'development' | 'staging' | 'production';
 
-export const THROTTLE_TTL = process.env.THROTTLE_TTL
-  ? +process.env.THROTTLE_TTL
-  : 60;
-export const THROTTLE_LIMIT = process.env.THROTTLE_LIMIT
-  ? +process.env.THROTTLE_LIMIT
-  : 10;
+export default registerAs('app', function () {
+  const PORT = process.env.PORT ? +process.env.PORT : 3000;
+  return {
+    NODE_ENV: (process.env.NODE_ENV as NodeEnvironment) ?? 'development',
+    APP_NAME: process.env.APP_NAME || 'Janna',
+    PORT,
+    BASE_URL: process.env.BASE_URL || `http://localhost:${PORT}`,
+    ORIGINS: process.env.ORIGINS ? process.env.ORIGINS.split(',') : '*',
+
+    THROTTLE_TTL: process.env.THROTTLE_TTL ? +process.env.THROTTLE_TTL : 60,
+    THROTTLE_LIMIT: process.env.THROTTLE_LIMIT
+      ? +process.env.THROTTLE_LIMIT
+      : 10,
+  };
+});

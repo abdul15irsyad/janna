@@ -1,9 +1,8 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
-import { MAIL_QUEUE } from './mail.config';
 
-@Processor(MAIL_QUEUE)
+@Processor('mail')
 export class MailConsumer {
   private readonly logger = new Logger(MailConsumer.name);
 

@@ -1,12 +1,15 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Inject, Injectable } from '@nestjs/common';
-import { APP_NAME, BASE_URL } from '../app.config';
+import { Injectable } from '@nestjs/common';
 import dayjs from 'dayjs';
 import { SendForgotPasswordEmail } from './interfaces/send-forgot-password-email.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MailService {
-  @Inject(MailerService) private mailerService: MailerService;
+  constructor(
+    private mailerService: MailerService,
+    private configService: ConfigService,
+  ) {}
 
   async sendForgotPasswordEmail({ to }: SendForgotPasswordEmail) {
     await this.mailerService.sendMail({
@@ -16,9 +19,11 @@ export class MailService {
       template: './forgot-password',
       context: {
         year: dayjs().year(),
-        appName: APP_NAME,
+        appName: this.configService.get<string>('app.APP_NAME'),
         userName: 'abdul15irsyad',
-        link: `${BASE_URL}/auth/reset-password?token=fhawfwjekahrj`,
+        link: `${this.configService.get<string>(
+          'app.BASE_URL',
+        )}/auth/reset-password?token=fhawfwjekahrj`,
         linkExpiredAt: dayjs().toString(),
       },
     });

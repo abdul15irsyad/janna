@@ -67,6 +67,9 @@ export type I18nTranslations = {
         "IS_UUID": string;
         "IS_INT": string;
         "IS_BOOLEAN": string;
+        "MAX_LENGTH": string;
+        "MAX_FILE_SIZE": string;
+        "HAS_MIME_TYPE": string;
     };
 };
 export type I18nPath = Path<I18nTranslations>;

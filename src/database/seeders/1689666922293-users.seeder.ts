@@ -1,15 +1,20 @@
 import { DataSource, DeepPartial } from 'typeorm';
 import { Seeder } from '@jorgebodega/typeorm-seeding';
 import { faker } from '@faker-js/faker/locale/id_ID';
-import { NODE_ENV } from '../../app.config';
 import dayjs from 'dayjs';
 import { SeederEntity } from '../entities/seeder.entity';
 import { User } from '../../user/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { hashPassword } from '../../shared/utils/password.util';
 import { Role } from '../../role/entities/role.entity';
+import { NodeEnvironment } from '../../app.config';
+import { ConfigService } from '@nestjs/config';
 
 export default class UsersSeeder extends Seeder {
+  constructor(private configService: ConfigService) {
+    super();
+  }
+
   public async run(datasource: DataSource): Promise<void> {
     // if seeder already executed
     if (
@@ -31,7 +36,9 @@ export default class UsersSeeder extends Seeder {
       password: 'x0TcLtjV22xXtDI',
       role: roles.find((role) => role.slug === 'super-administrator'),
     });
-    if (NODE_ENV !== 'production') {
+    if (
+      this.configService.get<NodeEnvironment>('app.NODE_ENV') !== 'production'
+    ) {
       users.push({
         id: '4bb84107-c197-43a0-9545-de815fc438a1',
         name: 'Teguh Irawan',
