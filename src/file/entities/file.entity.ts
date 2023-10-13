@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { BaseEntity } from '../../shared/entities/base.entity';
 import { User } from '../../user/entities/user.entity';
 import { AfterLoad, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import appConfig from 'src/app.config';
+import appConfig from '../../app.config';
 
 @ObjectType()
 @Entity('files')

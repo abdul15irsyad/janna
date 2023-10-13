@@ -4,14 +4,18 @@ import { i18nValidationMessage } from 'nestjs-i18n';
 import { IsNotExists } from '../../shared/validators/is-not-exists.validator';
 import { User } from '../entities/user.entity';
 import { Field, InputType, PartialType } from '@nestjs/graphql';
+import { I18nTranslations } from '../../i18n/i18n.generated';
 
 @InputType()
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @Field(() => String)
   @IsNotEmpty({
-    message: i18nValidationMessage('validation.IS_NOT_EMPTY', {
-      property: 'ID',
-    }),
+    message: i18nValidationMessage<I18nTranslations>(
+      'validation.IS_NOT_EMPTY',
+      {
+        property: 'ID',
+      },
+    ),
   })
   id: string;
 
@@ -19,13 +23,16 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsNotExists(
     { entity: User, field: 'username', isExcludeId: true },
     {
-      message: i18nValidationMessage('validation.IS_NOT_EXISTS', {
-        property: 'USERNAME',
-      }),
+      message: i18nValidationMessage<I18nTranslations>(
+        'validation.IS_NOT_EXISTS',
+        {
+          property: 'USERNAME',
+        },
+      ),
     },
   )
   @IsString({
-    message: i18nValidationMessage('validation.IS_STRING', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_STRING', {
       property: 'USERNAME',
     }),
   })
@@ -36,21 +43,24 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsNotExists(
     { entity: User, field: 'email', isExcludeId: true },
     {
-      message: i18nValidationMessage('validation.IS_NOT_EXISTS', {
-        property: 'EMAIL',
-      }),
+      message: i18nValidationMessage<I18nTranslations>(
+        'validation.IS_NOT_EXISTS',
+        {
+          property: 'EMAIL',
+        },
+      ),
     },
   )
   @IsEmail(
     {},
     {
-      message: i18nValidationMessage('validation.IS_EMAIL', {
+      message: i18nValidationMessage<I18nTranslations>('validation.IS_EMAIL', {
         property: 'EMAIL',
       }),
     },
   )
   @IsString({
-    message: i18nValidationMessage('validation.IS_STRING', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_STRING', {
       property: 'EMAIL',
     }),
   })

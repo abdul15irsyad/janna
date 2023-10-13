@@ -60,13 +60,17 @@ export type I18nTranslations = {
         "IS_STRING": string;
         "IS_STRONG_PASSWORD": string;
         "IS_EMAIL": string;
+        "IS_URL": string;
+        "IS_SPECIFIC_URL": string;
         "MATCH_PASSWORD": string;
         "IS_NOT_EXISTS": string;
         "IS_EXISTS": string;
         "IS_IN": string;
+        "IS_ENUM": string;
         "IS_UUID": string;
         "IS_INT": string;
         "IS_BOOLEAN": string;
+        "IS_FILE": string;
         "MAX_LENGTH": string;
         "MAX_FILE_SIZE": string;
         "HAS_MIME_TYPE": string;

@@ -12,19 +12,23 @@ import { IsNotExists } from '../../shared/validators/is-not-exists.validator';
 import { IsExists } from '../../shared/validators/is-exists.validator';
 import { Role } from '../../role/entities/role.entity';
 import { Field, InputType } from '@nestjs/graphql';
+import { I18nTranslations } from '../../i18n/i18n.generated';
 
 @InputType()
 export class CreateUserDto {
   @Field(() => String)
   @IsString({
-    message: i18nValidationMessage('validation.IS_STRING', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_STRING', {
       property: 'NAME',
     }),
   })
   @IsNotEmpty({
-    message: i18nValidationMessage('validation.IS_NOT_EMPTY', {
-      property: 'NAME',
-    }),
+    message: i18nValidationMessage<I18nTranslations>(
+      'validation.IS_NOT_EMPTY',
+      {
+        property: 'NAME',
+      },
+    ),
   })
   name: string;
 
@@ -32,20 +36,26 @@ export class CreateUserDto {
   @IsNotExists(
     { entity: User, field: 'username' },
     {
-      message: i18nValidationMessage('validation.IS_NOT_EXISTS', {
-        property: 'USERNAME',
-      }),
+      message: i18nValidationMessage<I18nTranslations>(
+        'validation.IS_NOT_EXISTS',
+        {
+          property: 'USERNAME',
+        },
+      ),
     },
   )
   @IsString({
-    message: i18nValidationMessage('validation.IS_STRING', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_STRING', {
       property: 'USERNAME',
     }),
   })
   @IsNotEmpty({
-    message: i18nValidationMessage('validation.IS_NOT_EMPTY', {
-      property: 'USERNAME',
-    }),
+    message: i18nValidationMessage<I18nTranslations>(
+      'validation.IS_NOT_EMPTY',
+      {
+        property: 'USERNAME',
+      },
+    ),
   })
   username: string;
 
@@ -53,28 +63,34 @@ export class CreateUserDto {
   @IsNotExists(
     { entity: User, field: 'email' },
     {
-      message: i18nValidationMessage('validation.IS_NOT_EXISTS', {
-        property: 'EMAIL',
-      }),
+      message: i18nValidationMessage<I18nTranslations>(
+        'validation.IS_NOT_EXISTS',
+        {
+          property: 'EMAIL',
+        },
+      ),
     },
   )
   @IsEmail(
     {},
     {
-      message: i18nValidationMessage('validation.IS_EMAIL', {
+      message: i18nValidationMessage<I18nTranslations>('validation.IS_EMAIL', {
         property: 'EMAIL',
       }),
     },
   )
   @IsString({
-    message: i18nValidationMessage('validation.IS_STRING', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_STRING', {
       property: 'EMAIL',
     }),
   })
   @IsNotEmpty({
-    message: i18nValidationMessage('validation.IS_NOT_EMPTY', {
-      property: 'EMAIL',
-    }),
+    message: i18nValidationMessage<I18nTranslations>(
+      'validation.IS_NOT_EMPTY',
+      {
+        property: 'EMAIL',
+      },
+    ),
   })
   email: string;
 
@@ -82,20 +98,26 @@ export class CreateUserDto {
   @IsStrongPassword(
     { minSymbols: 0 },
     {
-      message: i18nValidationMessage('validation.IS_STRONG_PASSWORD', {
-        property: 'PASSWORD',
-      }),
+      message: i18nValidationMessage<I18nTranslations>(
+        'validation.IS_STRONG_PASSWORD',
+        {
+          property: 'PASSWORD',
+        },
+      ),
     },
   )
   @IsString({
-    message: i18nValidationMessage('validation.IS_STRING', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_STRING', {
       property: 'PASSWORD',
     }),
   })
   @IsNotEmpty({
-    message: i18nValidationMessage('validation.IS_NOT_EMPTY', {
-      property: 'PASSWORD',
-    }),
+    message: i18nValidationMessage<I18nTranslations>(
+      'validation.IS_NOT_EMPTY',
+      {
+        property: 'PASSWORD',
+      },
+    ),
   })
   password: string;
 
@@ -109,15 +131,21 @@ export class CreateUserDto {
       },
     },
     {
-      message: i18nValidationMessage('validation.MATCH_PASSWORD', {
-        property: 'CONFIRM_PASSWORD',
-      }),
+      message: i18nValidationMessage<I18nTranslations>(
+        'validation.MATCH_PASSWORD',
+        {
+          property: 'CONFIRM_PASSWORD',
+        },
+      ),
     },
   )
   @IsNotEmpty({
-    message: i18nValidationMessage('validation.IS_NOT_EMPTY', {
-      property: 'CONFIRM_PASSWORD',
-    }),
+    message: i18nValidationMessage<I18nTranslations>(
+      'validation.IS_NOT_EMPTY',
+      {
+        property: 'CONFIRM_PASSWORD',
+      },
+    ),
   })
   confirmPassword: string;
 
@@ -125,20 +153,23 @@ export class CreateUserDto {
   @IsExists(
     { entity: Role },
     {
-      message: i18nValidationMessage('validation.IS_EXISTS', {
+      message: i18nValidationMessage<I18nTranslations>('validation.IS_EXISTS', {
         property: 'ROLE_ID',
       }),
     },
   )
   @IsUUID(4, {
-    message: i18nValidationMessage('validation.IS_UUID', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_UUID', {
       property: 'ROLE_ID',
     }),
   })
   @IsNotEmpty({
-    message: i18nValidationMessage('validation.IS_NOT_EMPTY', {
-      property: 'ROLE_ID',
-    }),
+    message: i18nValidationMessage<I18nTranslations>(
+      'validation.IS_NOT_EMPTY',
+      {
+        property: 'ROLE_ID',
+      },
+    ),
   })
   roleId: string;
 }

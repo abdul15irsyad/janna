@@ -1,12 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsString, IsOptional, IsEmail } from 'class-validator';
 import { i18nValidationMessage } from 'nestjs-i18n';
+import { I18nTranslations } from '../../i18n/i18n.generated';
 
 @InputType()
 export class UpdateAuthUserDto {
   @Field(() => String, { nullable: true })
   @IsString({
-    message: i18nValidationMessage('validation.IS_STRING', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_STRING', {
       property: 'NAME',
     }),
   })
@@ -15,7 +16,7 @@ export class UpdateAuthUserDto {
 
   @Field(() => String, { nullable: true })
   @IsString({
-    message: i18nValidationMessage('validation.IS_STRING', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_STRING', {
       property: 'USERNAME',
     }),
   })
@@ -26,13 +27,13 @@ export class UpdateAuthUserDto {
   @IsEmail(
     {},
     {
-      message: i18nValidationMessage('validation.IS_EMAIL', {
+      message: i18nValidationMessage<I18nTranslations>('validation.IS_EMAIL', {
         property: 'EMAIL',
       }),
     },
   )
   @IsString({
-    message: i18nValidationMessage('validation.IS_STRING', {
+    message: i18nValidationMessage<I18nTranslations>('validation.IS_STRING', {
       property: 'EMAIL',
     }),
   })
